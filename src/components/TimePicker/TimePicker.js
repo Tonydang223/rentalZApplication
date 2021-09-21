@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { StyleSheet, Text, View } from 'react-native'
-
-const TimePicker = () => {
-    const [date,setDate] = useState(new Date(Date.now()))
+import DateTimePicker from '@react-native-community/datetimepicker'
+import {formatISO, formatISO9075,formatRFC7231} from 'date-fns'
+const TimePicker = ({values,setValues,setError}) => {
+    const {dateTime} = values
+    const [date,setDate] = useState(new Date())
     const [mode,setMode] = useState('date')
     const [visible, setVisible] = useState(false)
     const onChange = (e,selectedDate)=>{
@@ -11,6 +13,21 @@ const TimePicker = () => {
         if(Platform.OS === "android"){
             setVisible(false)
         }
+        setDate(currentDate)
+        console.log(currentDate)
+
+        const timeAndDate = new Date(currentDate)
+        const fbDate = timeAndDate.getFullYear()+'/'+timeAndDate.getMonth()+'/'+timeAndDate.getDate();
+        const fnTime = timeAndDate.getHours()+':'+timeAndDate.getMinutes();
+        console.log({gi:`${fbDate} --- ${fnTime}`})
+        setValues({...values,dateTime:`${fbDate} --- ${fnTime}`})
+        if(dateTime !== '' || dateTime !== null){
+            setError((pre)=>{
+                return{...pre,dateTime:null}
+            })
+        }
+
+
     }
     const showMode = (currrentMode)=>{
         setVisible(true)
@@ -24,7 +41,11 @@ const TimePicker = () => {
     }
     return (
         <View style={styles.wrapper}>
-          <Text style={styles.dateTime}>YYYY-MM-DD --- HH:MM:SS</Text>
+          <Text style={styles.dateTime}>
+          {dateTime?
+          dateTime
+          :(<Text style={styles.placeholder}>YYYY-MM-DD --- HH:MM:SS</Text>)}
+          </Text>
           <View style={styles.iconContainer}>
              <Icon name="calendar-outline" size={23} color='black' onPress={showDatePicker}/>
              <Icon style={{marginLeft:10, marginRight:-6}} name="time-outline" size={23} 
@@ -32,6 +53,16 @@ const TimePicker = () => {
              onPress={showTimePicker}
              />
           </View>
+          {visible&&(
+              <DateTimePicker
+              testID='dateTimePicker'
+                  disabled="default"
+                  onChange={onChange}
+                  value={date}
+                  mode={mode}
+                  is24Hour={true}
+              />
+          )}
        </View>
     )
 }
@@ -63,6 +94,11 @@ const styles = StyleSheet.create({
     dateTime:{
         width:'78%',
         paddingTop:2
+    },
+    placeholder:{
+        fontSize:13,
+        color:'#CCCDC6',
+
     }
   });
 export default TimePicker

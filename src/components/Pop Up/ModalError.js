@@ -1,40 +1,48 @@
 import React, { useState } from 'react'
 import {View,Text,Modal, StyleSheet,TouchableOpacity} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-const ModalError = ({name,show}) => {
-    const [visible,setVisible] = useState(show)
+const ModalError = ({contents,show,status,setShow}) => {
+    
+
+    const onClick = ()=>{
+        setShow(false)
+    }
+    
+    const {name,color,headingText,content} = contents
+
     return (
-        <Modal transparent visible={true}>
+        <Modal transparent visible={show}>
             <View style={styles.modalWrapper}>
-            <View style={styles.box}>
+            {status === 'loading'?(<Text>Loading...</Text>):(
+                <View style={styles.box}>
                <View style={{alignItems:'center'}}>
                 <View style={styles.header}>
-                    <Icon style={styles.iconClose} name="close-outline" size={42} color="#000000"/>
+                    <Icon onPress={onClick} style={styles.iconClose} name="close-outline" size={42} color="#000000"/>
                 </View>
                 
                </View>
 
                <View style={{alignItems:'center'}}>                
-                <Icon style={styles.iconError} name={name} size={90} color="#CF000F"/>
+                <Icon style={styles.iconError} name={name} size={90} color={color}/>
                </View>
                <View style={{alignItems:'center'}}>                
-                <Text style={styles.headingText}>Warning !!!</Text>
+                <Text style={[styles.headingText,{color:color}]}>{headingText}</Text>
                </View>
 
                <View style={{alignItems:'center'}}>                
-                <Text style={styles.content}>Can you check it again please, you missed any the required field. 
-                The required fields must not empty.</Text>
+                <Text style={styles.content}>{content}</Text>
                </View>
 
                <View style={{alignItems:'center'}}>                
                 <TouchableOpacity
-                style={styles.btn}
+                style={[styles.btn,{backgroundColor:color}]}
                 >
-                <Text style={styles.textBtn}>CONFIRM</Text>
+                <Text style={[styles.textBtn]} onPress={onClick}>CONFIRM</Text>
                 </TouchableOpacity>
                </View>
                
             </View>
+            )}
             </View>
         </Modal>
     )
@@ -65,7 +73,6 @@ const styles = StyleSheet.create({
     },
     headingText:{
         fontSize:25,
-        color:'#CF000F',
         letterSpacing:1.3,
         textAlign:'center',
         padding:10,
@@ -91,7 +98,6 @@ const styles = StyleSheet.create({
     btn:{
         width:'100%',
         height:43,
-        backgroundColor:'#CF000F',
         borderRadius:5,
         elevation:7,
         shadowColor:'#fff',

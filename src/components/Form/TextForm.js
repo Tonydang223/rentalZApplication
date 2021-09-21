@@ -6,11 +6,11 @@ import TimePicker from '../TimePicker/TimePicker';
 import { ROOM_OPTIONS } from '../../constants/roomOptions';
 import { FUR_OPTIONS } from '../../constants/furnishedOptions';
 import ErrorMessage from '../ErrorMes/ErrorMessage';
-const TextForm = () => {
+const TextForm = ({setStatus,setShow}) => {
     const initialValues = {
         property:'',
         bedRoom:null,
-        dateTime:'',
+        dateTime:null,
         price:'',
         furType:null,
         note:'',
@@ -20,6 +20,9 @@ const TextForm = () => {
     }
     const [values,setValues] = useState(initialValues)
     const [error,setError]  = useState({})
+
+    console.log(values)
+
 
     //onChange
     const onChange = (name)=>(value)=>{
@@ -38,14 +41,6 @@ const TextForm = () => {
         }
 
     }
-    let arrayNullAndEmpty = []
-    console.log(arrayNullAndEmpty)
-    const validateTotal = ()=>{
-        const filterValue=Object.values(values).filter((item)=>item===null||item==='')
-        const findIndex = filterValue.every(item=>item===null||item==='')
-        return findIndex
-    }
-    
     
     const isValidate=()=>{
         //property
@@ -58,11 +53,13 @@ const TextForm = () => {
             setError((pre)=>{
                 return {...pre,bedRoom:'This field must be required'}
             })}
+     
         if(!values.dateTime){
             setError((pre)=>{
                 return {...pre,dateTime:'This field must be required'}
             })
         }
+       
         if(!values.price){
             setError((pre)=>{
                 return {...pre,price:'This field must be required'}
@@ -73,13 +70,28 @@ const TextForm = () => {
                 return {...pre,name:'This field must be required'}
             })
         }
+        if(!values.dateTime){
+            setError((pre)=>{
+                return {...pre,dateTime:'This field must be required'}
+            })
+        }
+        return true
     }
     const submit = (value)=>{
-        console.log(isValidate())
         if(isValidate()){
             console.log('have error')
-        }else{
-            console.log(value)
+            setStatus('error')
+            setShow(true)
+        }
+            
+        
+        if(value.name !== ''&& value.price!=='' &&value.bedRoom!==null&&value.property!==''&&value.dateTime !== null){
+           console.log(value)
+            setShow(true)
+            setStatus('loading')
+            setTimeout(()=>{
+                setStatus('success')
+            },2000)
             setValues({
                 property:'',
                 bedRoom:null,
@@ -130,10 +142,14 @@ const TextForm = () => {
             <ErrorMessage error={error.bedRoom}/>
         )}
         <Text style={styles.label}>Date and Time</Text>
-        <TimePicker/>
+        <TimePicker values={values} setValues={setValues} setError={setError}/>
+        {!error.dateTime?null:(
+            <ErrorMessage error={error.dateTime}/>
+        )}
         <Text style={styles.label}>Monthly Price</Text>
         <TextInput
             style={styles.input}
+            keyboardType="numeric"
             value={values.price}
             onChangeText={onChange('price')}
             placeholder="Enter Monthly Price here ...."
