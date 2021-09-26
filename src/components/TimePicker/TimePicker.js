@@ -3,7 +3,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { StyleSheet, Text, View } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import {formatISO, formatISO9075,formatRFC7231} from 'date-fns'
-const TimePicker = ({values,setValues,setError}) => {
+const TimePicker = ({values,setValues,setError,error}) => {
     const {dateTime} = values
     const [date,setDate] = useState(new Date())
     const [mode,setMode] = useState('date')
@@ -17,17 +17,14 @@ const TimePicker = ({values,setValues,setError}) => {
         console.log(currentDate)
 
         const timeAndDate = new Date(currentDate)
-        const fbDate = timeAndDate.getFullYear()+'/'+timeAndDate.getMonth()+'/'+timeAndDate.getDate();
-        const fnTime = timeAndDate.getHours()+':'+timeAndDate.getMinutes();
-        console.log({gi:`${fbDate} --- ${fnTime}`})
-        setValues({...values,dateTime:`${fbDate} --- ${fnTime}`})
+        const dateChoose = timeAndDate.toDateString()
+        const timeChoose = formatISO9075(timeAndDate,{representation:'time'})
+        setValues({...values,dateTime:`${dateChoose} - ${timeChoose}`})
         if(dateTime !== '' || dateTime !== null){
             setError((pre)=>{
                 return{...pre,dateTime:null}
             })
         }
-
-
     }
     const showMode = (currrentMode)=>{
         setVisible(true)
@@ -40,7 +37,7 @@ const TimePicker = ({values,setValues,setError}) => {
         showMode('time')
     }
     return (
-        <View style={styles.wrapper}>
+        <View style={[styles.wrapper,{borderColor:error.dateTime?'#CF000F':'#000000'}]}>
           <Text style={styles.dateTime}>
           {dateTime?
           dateTime

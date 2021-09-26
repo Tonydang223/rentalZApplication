@@ -6,8 +6,6 @@ const GetStarted = (props) => {
     const navigation = useNavigation()
     const {height,width}  = props
     const heightImage = (height*60)/100
-    console.log(heightImage)
-    console.log(height)
     const onClickNav = ()=>{
        navigation.navigate('MainPages')
     }

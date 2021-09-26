@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, TextInput, View,TouchableOpacity } from 'react-native'
 import RNPickerSelect from 'react-native-picker-select';
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -6,24 +6,43 @@ import TimePicker from '../TimePicker/TimePicker';
 import { ROOM_OPTIONS } from '../../constants/roomOptions';
 import { FUR_OPTIONS } from '../../constants/furnishedOptions';
 import ErrorMessage from '../ErrorMes/ErrorMessage';
-const TextForm = ({setStatus,setShow}) => {
+import dbSqlite from '../../../configs/dbOpen';
+const TextForm = ({setStatus,setShow,navigation}) => {
     const initialValues = {
         property:'',
         bedRoom:null,
-        dateTime:null,
+        dateTime:'',
         price:'',
         furType:null,
         note:'',
         name:'',
-        updatedAt:new Date(Date.now()),
-        img:'',
+        img:'https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
     }
     const [values,setValues] = useState(initialValues)
     const [error,setError]  = useState({})
+    const boderColorSelectbedRoom = error.bedRoom?'#CF000F':'#000000'
+     // insert Data
+     const InsertData = async(value) =>{
+         const {property,bedRoom,dateTime,price,furType,note,name,img} = value
+         const parsePrice = parseFloat(price)
+         await dbSqlite.dbOpen().transaction((tx)=>{
+             tx.executeSql(`
+             INSERT INTO rentalZ
+             (property,bedRoom,createdAt,price,furType,note,name,image)
+             VALUES (?,?,?,?,?,?,?,?)
+             `,
+             [property,bedRoom,dateTime,parsePrice,furType,note,name,img],
+             (tx,result)=>{
+                 setTimeout(()=>{
+                    setStatus('success')
+                },4000)
+                console.log('inSERT OK')
+             },
+             (error)=>{console.log(error)}
+             )
 
-    console.log(values)
-
-
+         })
+     }
     //onChange
     const onChange = (name)=>(value)=>{
          setValues({...values,[name]:value})
@@ -85,24 +104,11 @@ const TextForm = ({setStatus,setShow}) => {
         }
             
         
-        if(value.name !== ''&& value.price!=='' &&value.bedRoom!==null&&value.property!==''&&value.dateTime !== null){
-           console.log(value)
+        if(value.name !== ''&& value.price!=='' &&value.bedRoom!==null&&value.property!==''&&value.dateTime !== ''){
             setShow(true)
             setStatus('loading')
-            setTimeout(()=>{
-                setStatus('success')
-            },2000)
-            setValues({
-                property:'',
-                bedRoom:null,
-                dateTime:'',
-                price:'',
-                furType:null,
-                note:'',
-                name:'',
-                updatedAt:new Date(Date.now()),
-                img:'',
-            })
+            InsertData(value)
+            setValues(initialValues)
         }
     }
     const placeholder=(name)=> {
@@ -116,7 +122,7 @@ const TextForm = ({setStatus,setShow}) => {
         <View style={styles.formInside}>
         <Text style={styles.label}>Property Type</Text>
         <TextInput
-            style={styles.input}
+            style={[styles.input,{borderColor:error.property?'#CF000F':'#000000'}]}
             value={values.property}
             placeholder="Enter Property Types here ...."
             onChangeText={onChange('property')}
@@ -127,7 +133,7 @@ const TextForm = ({setStatus,setShow}) => {
         <Text style={styles.label}>Bed Rooms</Text>
         <RNPickerSelect
             useNativeAndroidPickerStyle={false}
-            style={pickerStyles}
+            style={pickerStyles(boderColorSelectbedRoom)}
             value={values.bedRoom}
             onValueChange={onChange('bedRoom')}
             placeholder={placeholder('Choose any kind of Bed Room...')}
@@ -142,13 +148,13 @@ const TextForm = ({setStatus,setShow}) => {
             <ErrorMessage error={error.bedRoom}/>
         )}
         <Text style={styles.label}>Date and Time</Text>
-        <TimePicker values={values} setValues={setValues} setError={setError}/>
+        <TimePicker values={values} setValues={setValues} setError={setError} error={error}/>
         {!error.dateTime?null:(
             <ErrorMessage error={error.dateTime}/>
         )}
         <Text style={styles.label}>Monthly Price</Text>
         <TextInput
-            style={styles.input}
+            style={[styles.input,,{borderColor:error.price?'#CF000F':'#000000'}]}
             keyboardType="numeric"
             value={values.price}
             onChangeText={onChange('price')}
@@ -160,7 +166,7 @@ const TextForm = ({setStatus,setShow}) => {
         <Text style={styles.label}>Furniture Type</Text>
         <RNPickerSelect
             useNativeAndroidPickerStyle={false}
-            style={pickerStyles}
+            style={pickerStyles()}
             value={values.furType}
             onValueChange={(value)=>setValues({...values,furType:value})}
             placeholder={placeholder('Choose any kind of Furniture Type...')}
@@ -183,7 +189,7 @@ const TextForm = ({setStatus,setShow}) => {
         />
         <Text style={styles.label}>Reporter</Text>
         <TextInput
-            style={styles.input}
+            style={[styles.input,,{borderColor:error.name?'#CF000F':'#000000'}]}
             value={values.name}
             onChangeText={onChange('name')}
             placeholder="Enter Your Name here ...."
@@ -286,13 +292,13 @@ const styles = StyleSheet.create({
         marginTop:5
     }
 })
-const pickerStyles = StyleSheet.create({
+const pickerStyles = (borderColor)=> StyleSheet.create({
     inputAndroid: {
         fontSize: 14,
         paddingHorizontal: 12,
         paddingVertical: 8,
         borderWidth: 1,
-        borderColor: 'black',
+        borderColor:borderColor,
         marginTop:6,
         borderRadius: 4,
         color: 'black',

@@ -1,11 +1,22 @@
 import React, { useState } from 'react'
 import {View,Text,Modal, StyleSheet,TouchableOpacity} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-const ModalError = ({contents,show,status,setShow}) => {
+import * as Progress from 'react-native-progress'
+import * as Animatable from 'react-native-animatable'
+const ModalError = ({contents,show,status,setShow,navigation}) => {
     
 
     const onClick = ()=>{
         setShow(false)
+    }
+
+    const onClickNav = ()=>{
+        if(status === "success"){
+          navigation.navigate('List')
+        }
+        else{
+            setShow(false)
+        }
     }
     
     const {name,color,headingText,content} = contents
@@ -13,8 +24,21 @@ const ModalError = ({contents,show,status,setShow}) => {
     return (
         <Modal transparent visible={show}>
             <View style={styles.modalWrapper}>
-            {status === 'loading'?(<Text>Loading...</Text>):(
-                <View style={styles.box}>
+            {status === 'loading'?
+            (<Progress.CircleSnail 
+            color={['#fff','#4B77BE','#22A7F0',]} 
+            size={80}
+            spinDuration={4000}
+            animating={true}
+            thickness={3}
+            />)
+            :(
+                <Animatable.View 
+                style={styles.box}
+                animation="bounceIn"
+                duration={2000}
+                easing='ease-in'
+                >
                <View style={{alignItems:'center'}}>
                 <View style={styles.header}>
                     <Icon onPress={onClick} style={styles.iconClose} name="close-outline" size={42} color="#000000"/>
@@ -37,11 +61,11 @@ const ModalError = ({contents,show,status,setShow}) => {
                 <TouchableOpacity
                 style={[styles.btn,{backgroundColor:color}]}
                 >
-                <Text style={[styles.textBtn]} onPress={onClick}>CONFIRM</Text>
+                <Text style={[styles.textBtn]} onPress={onClickNav}>CONFIRM</Text>
                 </TouchableOpacity>
                </View>
                
-            </View>
+            </Animatable.View>
             )}
             </View>
         </Modal>

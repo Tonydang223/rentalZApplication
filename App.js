@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React,{useState} from 'react';
+import React,{useEffect, useState} from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
@@ -12,13 +12,39 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import GetStarted from './src/screens/StartScreen';
 import Explore from './src/screens/Explore';
 import AddData from './src/screens/AddData';
+import dbSqlite from './configs/dbOpen';
 
 export default function App() {
-  const [rentalData,setRentalData] = useState({
-    data:[],
-    empty:false
-  })
+
   const {height,width} = Dimensions.get('screen')
+
+  
+  //createTableData
+  useEffect(()=>{
+    createTableData();
+  },[])
+  const createTableData = async()=>{
+    await dbSqlite.dbOpen().transaction((tx)=>{
+      tx.executeSql(`CREATE TABLE IF NOT EXISTS rentalZ 
+      (rental_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        property TEXT(150),
+        bedRoom VARCHAR(100) NOT NULL, 
+        createdAt TIMESTAMP NOT NULL, 
+        price NUMERIC NOT NULL, 
+        furType VARCHAR(100), 
+        note TEXT(500), 
+        name VARCHAR(100), 
+        image BLOB NOT NULL)`,
+        (tx,result)=>{},
+        (error)=>{console.log("Error",error)}
+        )
+        console.log("Connect successfully!!!")
+    })
+  }
+
+
+  //fetchData
+  
 
   //ROUTE
   const Stack = createStackNavigator();
@@ -27,13 +53,12 @@ export default function App() {
   const CatalogNesting = ()=>{
     return(
       <Stack.Navigator
-      initialRouteName="Catalog"
       screenOptions={()=>({
         headerShown:false
       })}
       >
-          <Stack.Screen name="Catalog" children={()=>(<Catalog rentalData={rentalData}/>)}/>
-          <Stack.Screen name="Details" children={()=>(<Details rentalData={rentalData}/>)}/>
+          <Stack.Screen name="Catalog" children={()=>(<Catalog />)} />
+          <Stack.Screen name="Details" children={()=>(<Details />)}/>
       </Stack.Navigator>
     )
   }
@@ -89,7 +114,7 @@ export default function App() {
          <BottomTab.Screen name="List" children={CatalogNesting}/>
          <BottomTab.Screen 
          name="AddData" 
-         component={AddData}
+         children={()=>(<AddData />)}
          options={({route})=>({
            tabBarIcon:({focused,color,size})=>{
              return(
