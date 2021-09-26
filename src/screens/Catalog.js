@@ -5,18 +5,17 @@ import dbSqlite from '../../configs/dbOpen';
 import {useIsFocused} from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar';
 import {useNavigation} from '@react-navigation/native'
-import Icon from 'react-native-vector-icons/Ionicons'
-
+import FLatListRentals from '../components/FlatList/FLatListRentals';
+import FlashMessage,{showMessage,hideMessage} from "react-native-flash-message";
 const Catalog = () => {
   const navigation = useNavigation()
   const [rentalData,setRentalData] = useState({
     data:[],
     empty:false
  })
- const [image,setImage] = useState('')
- console.log(image)
+ const [show,setShow] = useState(false)
  console.log(rentalData.data)
- const [loading,setLoading] = useState(false)
+ const [status,setStatus] = useState('')
  const isFocused = useIsFocused();
  const onOpenDetails =(id)=>{
    console.log(id)
@@ -60,14 +59,16 @@ const Catalog = () => {
   }
   useEffect(()=>{
     fetchAllData()
-    if(loading === true){
+    if(status === 'pending'){
       setTimeout(()=>{
-        setLoading(false)
+         setStatus('success')
       },3000)
+    }else if(status === ''){
+      setStatus('')
     }
     requestLibrary();
     
-  },[isFocused,loading])
+  },[isFocused,status])
  
   const empty = (status)=>{
     return(
@@ -77,55 +78,53 @@ const Catalog = () => {
     )
   }
     
-    
-    
 
-    //   const deletec = ()=>{
-    //     
-    //      ({...rentalData,data:arryF})
-    //   }
-     
     
        
-    const deletePicture = async()=>{
+    const deletePicture = async(id)=>{
         await dbSqlite.dbOpen().transaction((tx)=>{
           tx.executeSql("DELETE FROM rentalZ WHERE rental_id=?",
-          [13],
+          [id],
           (tx,result)=>{
             // const arryF= rentalData.data.filter(item=>item.rental_id !== 2)
             // setRentalData({...rentalData,data:arryF})
-            setLoading(true)
+            setStatus('pending')
             console.log('OK')
           },
-          (error)=>{console.log('loi r')}
+          (error)=>{
+            console.log('loi r')
+          }
           )
       })
      }
 
-     const uploadPicture = async()=>{
+   const uploadPicture = async(id)=>{
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing:true,
         aspect:[4,3],
         quality:1
     })
-    if(!result.cancelled){
-      setImage(result.uri)
-    }
     const img = !result.cancelled?result.uri:'https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940'
     await dbSqlite.dbOpen().transaction((tx)=>{
-      tx.executeSql("UPDATE rentalZ SET image=?, name=? WHERE rental_id=?",
-      [img,"Jupiter",1],
+      tx.executeSql("UPDATE rentalZ SET image=? WHERE rental_id=?",
+      [img,id],
       (tx,result)=>{
         console.log('ok do')
         setLoading(true)
       },
-      (error)=>{console.log("loi me r")}
+      (error)=>{
+        console.log("loi me r")
+      showMessage({
+        message: "Error Delete",
+        description: "The post can't remove",
+        type: "error",
+      })
+      }
       )
     })
   }
 
-  const SPACING = 20
  
     return (
         <View style={styles.wrapper}>
@@ -135,51 +134,18 @@ const Catalog = () => {
            </View>
            {/* <Button title="Delete" onPress={deletePicture}/>
            <Button title="Upload" onPress={uploadPicture}/> */}
-           <View style={{flex:1,backgroundColor:'#fff'}}>
-           {rentalData.empty?empty():(
-            <FlatList
-                data={rentalData.data}
-                keyExtractor={item=>item.rental_id.toString()}
-                contentContainerStyle={{
-                  padding:SPACING,
-                }}
-                renderItem={({item,index})=>(
-                    // <View >
-                    <TouchableOpacity
-                    onPress={()=>onOpenDetails(item.rental_id)}
-                      style={{
-                      flexDirection:'column',
-                      backgroundColor:'#f',
-                      marginBottom:SPACING,
-                      borderRadius:15,
-                      backgroundColor:'#c8cbcf'
-                      }}
-                      >
-                    <View style={styles.onAbove}>
-                    <Icon name="close-outline" size={45} color="#fff"/>
-                    <Image 
-                        source={{uri:item.image}}
-                        style={{
-                          width:'100%',
-                          height:150,
-                          borderTopLeftRadius:15,
-                          borderTopRightRadius:15
-                          }}
-                    />
-                     <Icon name="image" size={45} color="#fff"/>
-
-                    </View>
-                        <View style={styles.contentList}>
-                          <Text>{item.name}</Text>
-                          <Text>{item.rental_id}</Text>
-                        </View>
-                  </TouchableOpacity>
-                    // </View>
-                )}
-            />
-           )}
-           </View>
-           
+           <FLatListRentals 
+           rentalData={rentalData} 
+           empty={empty}
+           onOpenDetails={onOpenDetails}
+           uploadPicture={uploadPicture}
+          setShow ={setShow}
+          show={show}
+            deletePicture={deletePicture}
+            status={status}
+            setStatus={setStatus}
+           />
+           <FlashMessage position="top" autoHide={true} duration={3000}/>
         </View>
     )
 }
@@ -200,22 +166,12 @@ const styles = StyleSheet.create({
          fontWeight:'900',
          letterSpacing:1.2
     },
-    onAbove:{
-      flex:1,
-      width:'100%'
-    },
     bg:{
         width:'100%',
         height:'100%',
         zIndex:0,
         position:'relative',
         marginBottom:5
-    },
-    contentList:{
-        flex:1,
-        flexDirection:'row',
-        alignItems:'flex-start',
-        padding:20
     },
     header:{
         width:'100%',

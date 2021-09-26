@@ -4,25 +4,28 @@ import KeyBoardAvoidViewWrapper from '../components/KeyBoardAvoidView/KeyBoardAv
 import ModalError from '../components/Pop Up/ModalError';
 import contentPopUp from '../constants/contentPopUp';
 import TextForm from './../components/Form/TextForm';
-import {useNavigation} from '@react-navigation/native'
+import {useNavigation,useIsFocused} from '@react-navigation/native'
 
 const AddData = () => {
     const navigation = useNavigation()
     const [status,setStatus] = useState('')
+    const isFocused = useIsFocused()
     const [show,setShow] = useState(false)
     const [contents,setContents] = useState({})
     useEffect(()=>{
         handleContentPopUp();
-    },[status,show])
+    },[status])
     const handleContentPopUp = ()=>{
         if(status === 'error'){
             setContents(contentPopUp.error)
+            setShow(true)
         }else if(status === 'success'){
             setContents(contentPopUp.success)
+            setShow(true)
         }else if(status === 'loading'){
             setContents({})
+            setShow(true)
         }
-      return
     }
     return (
         <KeyBoardAvoidViewWrapper>
