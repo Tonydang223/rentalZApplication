@@ -3,37 +3,29 @@ import {View,Text,Modal, StyleSheet,TouchableOpacity} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as Progress from 'react-native-progress'
 import * as Animatable from 'react-native-animatable'
-const ModalError = ({contents,show,status,setShow,navigation}) => {
+const ModalError = ({contents,show,status,setShow}) => {
     
 
     const onClick = ()=>{
-        setShow(false)
+      setShow(false) 
     }
-
-    const onClickNav = ()=>{
-        if(status === "success"){
-          navigation.navigate('List')
-          setShow(false)
-        }
-        else{
-            setShow(false)
-        }
-    }
-    
     const {name,color,headingText,content} = contents
 
     return (
         <Modal transparent visible={show}>
-            <View style={styles.modalWrapper}>
             {status === 'loading'?
-            (<Progress.CircleSnail 
-            color={['#fff','#4B77BE','#22A7F0',]} 
+            (
+            <View style={styles.wrapperProgress}>
+            <Progress.CircleSnail 
+            color={['#4B77BE','#22A7F0',]} 
             size={80}
             spinDuration={4000}
             animating={true}
             thickness={3}
-            />)
+            />
+            </View>)
             :(
+                <View style={styles.modalWrapper}>
                 <Animatable.View 
                 style={styles.box}
                 animation="bounceIn"
@@ -62,13 +54,12 @@ const ModalError = ({contents,show,status,setShow,navigation}) => {
                 <TouchableOpacity
                 style={[styles.btn,{backgroundColor:color}]}
                 >
-                <Text style={[styles.textBtn]} onPress={onClickNav}>CONFIRM</Text>
+                <Text style={[styles.textBtn]} onPress={onClick}>CONFIRM</Text>
                 </TouchableOpacity>
                </View>
-               
             </Animatable.View>
-            )}
             </View>
+            )}
         </Modal>
     )
 }
@@ -76,6 +67,11 @@ const styles = StyleSheet.create({
     modalWrapper:{
         flex:1,
         backgroundColor:'rgba(0,0,0,0.2)',
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    wrapperProgress:{
+        flex:1,
         justifyContent:'center',
         alignItems:'center'
     },
@@ -130,7 +126,7 @@ const styles = StyleSheet.create({
         shadowOpacity:0.4,
         shadowRadius:4,
         alignItems:'center',
-        marginTop:30
+        marginTop:15
     },
     textBtn:{
        fontSize:22,

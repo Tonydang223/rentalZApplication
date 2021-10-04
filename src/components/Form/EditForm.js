@@ -2,48 +2,47 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, TextInput, View,TouchableOpacity } from 'react-native'
 import RNPickerSelect from 'react-native-picker-select';
 import Icon from 'react-native-vector-icons/Ionicons'
-import TimePicker from '../TimePicker/TimePicker';
-import { ROOM_OPTIONS } from '../../constants/roomOptions';
-import { FUR_OPTIONS } from '../../constants/furnishedOptions';
-import ErrorMessage from '../ErrorMes/ErrorMessage';
 import dbSqlite from '../../../configs/dbOpen';
+import { FUR_OPTIONS } from '../../constants/furnishedOptions';
+import { ROOM_OPTIONS } from '../../constants/roomOptions';
+import ErrorMessage from '../ErrorMes/ErrorMessage';
+import TimePicker from '../TimePicker/TimePicker';
 import { pickerStyles, styles } from './styles';
-const TextForm = ({setStatus,setShow,navigation,status}) => {
-    const initialValues = {
-        property:'',
-        bedRoom:null,
-        dateTime:'',
-        price:'',
-        furType:null,
-        note:'',
-        name:'',
-        img:'https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
-    }
-    const [values,setValues] = useState(initialValues)
+
+const EditForm = ({dataObj,setEditVisible,setStatus}) => {
+    const {createdAt,price} = dataObj
+    const dataObjNew = {...dataObj,dateTime:createdAt,price:price.toString()}
+
+    const [values,setValues] = useState(dataObjNew)
+    console.log(values)
     const [error,setError]  = useState({})
     const boderColorSelectbedRoom = error.bedRoom?'#CF000F':'#000000'
-     // insert Data
-     const InsertData = async(value) =>{
-         const {property,bedRoom,dateTime,price,furType,note,name,img} = value
-         const parsePrice = parseFloat(price)
-         await dbSqlite.dbOpen().transaction((tx)=>{
-             tx.executeSql(`
-             INSERT INTO rentalZ
-             (property,bedRoom,createdAt,price,furType,note,name,image)
-             VALUES (?,?,?,?,?,?,?,?)
-             `,
-             [property,bedRoom,dateTime,parsePrice,furType,note,name,img],
-             (tx,result)=>{
-                 setTimeout(()=>{
-                    setStatus('success')
-                },2000)
-                console.log('inSERT OK')
-             },
-             (error)=>{console.log(error)}
-             )
-
-         })
-     }
+     // update Data
+    const updateData = async(value)=>{
+        const {property,bedRoom,dateTime,price,furType,note,name,rental_id}=value
+        const parsePrice = parseFloat(price)
+       await dbSqlite.dbOpen().transaction((tx)=>{
+           tx.executeSql(`UPDATE rentalZ SET 
+           property=?, 
+           bedRoom=?,
+           createdAt=?,
+           price=?,
+           furType=?,
+           note=?,
+           name=? WHERE rental_id = ? `,
+           [property,bedRoom,dateTime,parsePrice,furType,note,name,rental_id],
+           (tx,result)=>{
+            setTimeout(()=>{
+                setStatus('success')
+            },3000)
+            console.log('update oke')
+           },
+           (error)=>{
+               console.log('loi update')
+           }
+           )
+       })
+    }
     //onChange
     const onChange = (name)=>(value)=>{
          setValues({...values,[name]:value})
@@ -101,15 +100,14 @@ const TextForm = ({setStatus,setShow,navigation,status}) => {
         if(isValidate()){
             console.log('have error')
             setStatus('error')
-            setShow(true) 
+            setEditVisible(true)
         }
-            
         
         if(value.name !== ''&& value.price!=='' &&value.bedRoom!==null&&value.property!==''&&value.dateTime !== ''){
-            setShow(true) 
+            setEditVisible(true)
             setStatus('loading')
-            InsertData(value)
-            setValues(initialValues)
+            updateData(value)
+            console.log('no loi')
         }
     }
     const placeholder=(name)=> {
@@ -205,9 +203,11 @@ const TextForm = ({setStatus,setShow,navigation,status}) => {
         style={styles.pressBtn}
         onPress={()=>submit(values)}
         >
-                    <Text style={styles.text}>CREATE</Text>
+                    <Text style={styles.text}>UPDATE</Text>
         </TouchableOpacity>
         </View>
     )
 }
-export default TextForm
+
+
+export default EditForm

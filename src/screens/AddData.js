@@ -8,23 +8,20 @@ import {useNavigation,useIsFocused} from '@react-navigation/native'
 
 const AddData = () => {
     const navigation = useNavigation()
-    const [status,setStatus] = useState('')
     const isFocused = useIsFocused()
-    const [show,setShow] = useState(false)
     const [contents,setContents] = useState({})
+    const [show,setShow] = useState(false)
+    const [status,setStatus] = useState('')
     useEffect(()=>{
         handleContentPopUp();
     },[status])
     const handleContentPopUp = ()=>{
         if(status === 'error'){
             setContents(contentPopUp.error)
-            setShow(true)
         }else if(status === 'success'){
             setContents(contentPopUp.success)
-            setShow(true)
         }else if(status === 'loading'){
             setContents({})
-            setShow(true)
         }
     }
     return (
@@ -35,7 +32,7 @@ const AddData = () => {
             navigation={navigation}
             />
             <Text style={styles.textHeading}>RentalZ</Text>
-            <TextForm setStatus={setStatus} setShow={setShow} 
+            <TextForm setStatus={setStatus} setShow={setShow} status={status}
             navigation={navigation}
             />
         </View>
@@ -50,7 +47,7 @@ const styles = StyleSheet.create({
     },
     textHeading:{
         fontSize:25,
-        marginTop:20
+        marginTop:20,
     }
 })
 export default AddData

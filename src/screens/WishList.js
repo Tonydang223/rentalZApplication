@@ -3,11 +3,11 @@ import { StyleSheet, View,Text, Button, Platform, Image } from 'react-native';
 
 import * as ImagePicker from 'expo-image-picker'
 import dbSqlite from '../../configs/dbOpen';
-const Home = () => {
+const WishList = () => {
    
     return (
         <View style={styles.wrapper}>
-            <Text style={styles.textHeading}>Home</Text>
+            <Text style={styles.textHeading}>WishList</Text>
         </View>
     )
 }
@@ -22,4 +22,4 @@ const styles = StyleSheet.create({
         marginTop:50
     }
 })
-export default Home
+export default WishList

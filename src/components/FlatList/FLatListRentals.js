@@ -2,20 +2,47 @@ import React, { useState } from 'react'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { StyleSheet, View,Text, Image,FlatList,Button, Alert, TouchableWithoutFeedback,TouchableOpacity, TouchableHighlight } from 'react-native';
 import ModalDelete from '../Pop Up/ModalDelete';
+import ModalUpload from '../Pop Up/ModalUploadImage';
 const FLatListRentals = (props) => {
-    const {rentalData,empty,onOpenDetails,uploadPicture,setShow,show,deletePicture,status,setStatus} = props
+    const {rentalData,onOpenDetails,uploadPicture,setShow,show,deletePicture,status,setStatus,action,setAction,navigation} = props
     const SPACING = 20
     const [id,setId] = useState()
-    console.log(id)
     const onClickTakenId = (id)=>{
+        setAction('delete')
         setShow(true)
         setId(id)
     }
+    const empty = ()=>{
+        return(
+            <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+            <Image style={{width:350,height:350}} source={{uri:'https://i.pinimg.com/236x/ae/8a/c2/ae8ac2fa217d23aadcc913989fcc34a2.jpg'}}/>
+            </View>
+        )
+    }
+    const onClickEditPage = (id)=>{
+        const findObj = rentalData.data.find((item)=>item.rental_id  === id)
+        navigation.navigate('EditForm',{action:'edit',dataObj:findObj})
+    }
     return (
         <View style={{flex:1,backgroundColor:'#fff'}}>
-        {rentalData.empty?empty():(
-         <FlatList
-             data={rentalData&&rentalData.data}
+        {action === 'upload'?(
+        <ModalUpload
+        show={show} 
+        setShow={setShow} 
+        status={status}
+        setStatus={setStatus}
+        />
+        ):(<ModalDelete 
+        show={show} 
+        setShow={setShow}
+        deletePicture={deletePicture}
+        id={id}
+        status={status}
+        setStatus={setStatus}
+        />)}
+        {rentalData.empty?(empty()):(
+            <FlatList
+             data={rentalData.data}
              keyExtractor={item=>item.rental_id.toString()}
              contentContainerStyle={{
                padding:SPACING,
@@ -36,14 +63,6 @@ const FLatListRentals = (props) => {
                     elevation:15
                    }}
                    >
-                <ModalDelete 
-                show={show} 
-                setShow={setShow}
-                deletePicture={deletePicture}
-                id={id}
-                status={status}
-                setStatus={setStatus}
-                />
                  <View style={styles.onAbove}>
                  <Text style={styles.price}>${item.price}</Text>
                  <Image 
@@ -68,6 +87,13 @@ const FLatListRentals = (props) => {
                        <Text style={styles.dateTime}>{item.createdAt}</Text>
                        </View>
                        <Icon 
+                       name="create" 
+                       size={26} 
+                       color="rgb(0, 230, 64)" 
+                       style={{marginTop:-3,marginLeft:60}}
+                       onPress={()=>onClickEditPage(item.rental_id)}
+                       />
+                       <Icon 
                        name="trash" 
                        size={25} 
                        color="#ff3333" 
@@ -84,11 +110,11 @@ const FLatListRentals = (props) => {
                         <Text style={styles.texthead}>Bed Room</Text>
                         <Text style={styles.textContent}>{item.bedRoom}</Text>
                        </View>
-                       <View style={styles.cover}>
+                       <View style={[styles.cover,{left:4}]}>
                        <Text style={styles.texthead}>Property Type</Text>
                         <Text style={styles.textContent}>{item.property}</Text>
                         </View>
-                        <View style={styles.cover}>
+                        <View style={[styles.cover,{left:7}]}>
                         <Text style={styles.texthead}>Furniture Type</Text>
                         <Text style={styles.textContent}>{item.furType?item.furType:'None'}</Text>
                         </View>
@@ -102,6 +128,7 @@ const FLatListRentals = (props) => {
              )}
          />
         )}
+        
         </View>
     )
 }
@@ -129,7 +156,8 @@ const styles = StyleSheet.create({
       paddingRight:7
     },
     textName:{
-        fontSize:25
+        fontSize:25,
+        textTransform:'capitalize'
     },
     textNameUnder:{
         fontSize:14,
@@ -147,9 +175,8 @@ const styles = StyleSheet.create({
         borderLeftColor:'#ACADA8',
         alignItems:'flex-start',
         padding:5,
-        marginLeft:2,
+        marginLeft:3,
         marginRight:2,
-        width:'33%'
     },
     texthead:{
         fontSize:12,

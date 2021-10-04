@@ -13,12 +13,11 @@ const Catalog = () => {
     data:[],
     empty:false
  })
+ const [action,setAction] = useState('')
  const [show,setShow] = useState(false)
- console.log(rentalData.data)
  const [status,setStatus] = useState('')
  const isFocused = useIsFocused();
  const onOpenDetails =(id)=>{
-   console.log(id)
    navigation.navigate('Details',{
      idCard:id,
      message:'taken id ok!!!'
@@ -62,25 +61,16 @@ const Catalog = () => {
     if(status === 'pending'){
       setTimeout(()=>{
          setStatus('success')
-      },3000)
-    }else if(status === ''){
-      setStatus('')
+      },2000)
+    }else if(status === 'success'){
+      setTimeout(()=>{
+        setStatus('')
+        setShow(false)
+      },6000)
     }
     requestLibrary();
     
   },[isFocused,status])
- 
-  const empty = (status)=>{
-    return(
-      <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#fff'}}>
-        <Text style={{fontSize:25,fontWeight:700}}>No data here...</Text>
-      </View>
-    )
-  }
-    
-
-    
-       
     const deletePicture = async(id)=>{
         await dbSqlite.dbOpen().transaction((tx)=>{
           tx.executeSql("DELETE FROM rentalZ WHERE rental_id=?",
@@ -89,10 +79,16 @@ const Catalog = () => {
             // const arryF= rentalData.data.filter(item=>item.rental_id !== 2)
             // setRentalData({...rentalData,data:arryF})
             setStatus('pending')
+            setAction('delete')
             console.log('OK')
           },
           (error)=>{
             console.log('loi r')
+            showMessage({
+              message: "Error Delete",
+              description: "The post can't remove",
+              type: "error",
+            })
           }
           )
       })
@@ -105,45 +101,42 @@ const Catalog = () => {
         aspect:[4,3],
         quality:1
     })
-    const img = !result.cancelled?result.uri:'https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940'
+    console.log(result)
+    const img = !result.cancelled?result.uri:null
     await dbSqlite.dbOpen().transaction((tx)=>{
       tx.executeSql("UPDATE rentalZ SET image=? WHERE rental_id=?",
       [img,id],
       (tx,result)=>{
         console.log('ok do')
-        setLoading(true)
+        setStatus('pending')
+        setAction('upload')
+        setShow(true)
       },
       (error)=>{
-        console.log("loi me r")
-      showMessage({
-        message: "Error Delete",
-        description: "The post can't remove",
-        type: "error",
-      })
+        console.log("don't upload any image ")
       }
       )
     })
   }
-
- 
     return (
         <View style={styles.wrapper}>
            <View style={styles.header}>
            <Image  resizeMode='cover' style={styles.bg} source={require('../../assets/images/bb.jpg')}/>
            <Text style={styles.textHeading}>Catalog</Text>
            </View>
-           {/* <Button title="Delete" onPress={deletePicture}/>
-           <Button title="Upload" onPress={uploadPicture}/> */}
-           <FLatListRentals 
-           rentalData={rentalData} 
-           empty={empty}
-           onOpenDetails={onOpenDetails}
-           uploadPicture={uploadPicture}
-          setShow ={setShow}
-          show={show}
+
+            <FLatListRentals 
+            rentalData={rentalData} 
+            onOpenDetails={onOpenDetails}
+            uploadPicture={uploadPicture}
+            setShow ={setShow}
+            show={show}
             deletePicture={deletePicture}
             status={status}
             setStatus={setStatus}
+            action={action}
+            setAction={setAction}
+            navigation={navigation}
            />
            <FlashMessage position="top" autoHide={true} duration={3000}/>
         </View>

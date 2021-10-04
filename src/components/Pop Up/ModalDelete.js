@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import {View,Text,Modal, StyleSheet,TouchableOpacity} from 'react-native'
+import {View,Text,Modal, StyleSheet,TouchableOpacity,Dimensions} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as Progress from 'react-native-progress'
 import * as Animatable from 'react-native-animatable'
 const ModalDelete = ({show,status,setShow,deletePicture,id,setStatus}) => {
-    
+    const {height,width} = Dimensions.get('screen')
     console.log(id)
     const onClick = ()=>{
         setShow(false)
@@ -13,62 +13,38 @@ const ModalDelete = ({show,status,setShow,deletePicture,id,setStatus}) => {
         setShow(false)
         setStatus('')
     }
-    const onClickNav = ()=>{
-        deletePicture(id)
-    }
-    
-
     return (
         <Modal transparent visible={show}>
-           {status === 'pending'?(
+           {status === 'pending' ?(
             <View
-            style={styles.modalWrapper}
+            style={styles.modalProcess}
             >
             <Progress.CircleSnail 
-            color={['#fff','#4B77BE','#22A7F0',]} 
+            color={['#4B77BE','#22A7F0']} 
             size={80}
-            spinDuration={2000}
+            spinDuration={1000}
             animating={true}
             thickness={3}
             />  
             </View>
 
            ):(
-            <View style={styles.modalWrapper}>
-            {status === 'success'?(
+            <View style={{height:height,width:width}}>
+            {status === 'success' ?(
+                <View style={{flex:1, justifyContent:'flex-end', alignItems:'center'}}>
                 <Animatable.View 
-                style={styles.box}
-                animation="bounceIn"
+                style={styles.boxSuccess}
+                animation="fadeInUpBig"
                 duration={2000}
                 easing='ease-in'
                 >
-               <View style={{alignItems:'center'}}>
-                <View style={styles.header}>
-                <Icon onPress={onClickConfirm} style={styles.iconClose} name="close-outline" size={42} color="#000000"/>
-                </View>
-                
-               </View>
-
-               <View style={{alignItems:'center'}}>                
-                <Icon style={styles.iconError} name="checkmark-circle" size={90} color='rgb(0, 230, 64)'/>
-               </View>
-               <View style={{alignItems:'center'}}>                
-                <Text style={[styles.headingText,{color:"rgb(0, 230, 64)"}]}>Success</Text>
-               </View>
-
-               <View style={{alignItems:'center'}}>                
-                <Text style={styles.content}>You removed the post successfully!!!</Text>
-               </View>
-
-               <View style={{alignItems:'center'}}>                
-                <TouchableOpacity
-                style={[styles.btn,{backgroundColor:'rgb(0, 230, 64)'}]}
-                >
-                <Text style={[styles.textBtn]} onPress={onClickConfirm}>CONFIRM</Text>
-                </TouchableOpacity>
-               </View>
+                <Icon onPress={onClickConfirm} style={{marginRight:3}} name="checkmark-circle" size={25} color="rgb(0, 230, 64)"/>
+                <Text style={styles.contentSuccess}>Deleted the post successfully!!!</Text>               
+                <Icon onPress={onClickConfirm} style={styles.iconCloseAbove} name="close-outline" size={30} color="#000000"/>
                </Animatable.View>
+               </View>
             ):(
+                <View style={styles.modalWrapper}>
                 <Animatable.View 
                 style={styles.box}
                 animation="bounceIn"
@@ -97,7 +73,7 @@ const ModalDelete = ({show,status,setShow,deletePicture,id,setStatus}) => {
                 <TouchableOpacity
                 style={[styles.btn,{backgroundColor:'#CF000F'}]}
                 >
-                <Text style={[styles.textBtn]} onPress={onClickNav}>DELETE</Text>
+                <Text style={[styles.textBtn]} onPress={()=>deletePicture(id)}>DELETE</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                 style={[styles.btn,{backgroundColor:'#000000'}]}
@@ -106,6 +82,7 @@ const ModalDelete = ({show,status,setShow,deletePicture,id,setStatus}) => {
                 </TouchableOpacity>
                </View>
                </Animatable.View>
+               </View>
             )}
             </View>
            )}
@@ -170,7 +147,7 @@ const styles = StyleSheet.create({
         shadowOpacity:0.4,
         shadowRadius:4,
         alignItems:'center',
-        marginTop:30
+        marginTop:15
     },
     textBtn:{
        fontSize:22,
@@ -178,6 +155,38 @@ const styles = StyleSheet.create({
        color:'#fff',
        marginTop:3,
        marginBottom:3
+    },
+    modalProcess:{
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    contentSuccess:{
+        fontSize:12,
+        color:'#746D69',
+        letterSpacing:1,
+        padding:10,
+        marginLeft:6
+    },
+    boxSuccess:{
+        width:'80%',
+        padding:15,
+        backgroundColor:'#fff',
+        borderRadius:30,
+        elevation:22,
+        shadowColor:'#000',
+        shadowOffset:{width:2,height:10},
+        shadowOpacity:0.5,
+        shadowRadius:4,
+        height:50,
+        marginBottom: 220,
+        display:'flex',
+        flexDirection:'row',
+        justifyContent:'space-around',
+        alignItems:'center'
+    },
+    iconCloseAbove:{
+        marginLeft:6
     }
 })
 
