@@ -33,6 +33,12 @@ const SearchPage = () => {
            setSearch(text)
        } 
     }
+    const openDetails =(id)=>{
+        navigation.navigate('Details',{
+          idCard:id,
+          message:'taken id successfully!!!'
+        })
+      }
     const getData = async()=>{
         await dbSqlite.dbOpen().transaction((tx)=>{
             tx.executeSql('SELECT * FROM rentalZ',
@@ -109,6 +115,8 @@ const SearchPage = () => {
             <View style={styles.line}></View>
             <FlatListSearch 
                 dataSearch={dataSearch}
+                navigation={navigation}
+                openDetails={openDetails}
             />
 
 

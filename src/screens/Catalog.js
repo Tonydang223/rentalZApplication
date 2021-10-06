@@ -13,16 +13,17 @@ const Catalog = () => {
     data:[],
     empty:false
  })
+ const onOpenDetails =(id)=>{
+  navigation.navigate('Details',{
+    idCard:id,
+    message:'taken id ok!!!'
+  })
+}
  const [action,setAction] = useState('')
  const [show,setShow] = useState(false)
  const [status,setStatus] = useState('')
  const isFocused = useIsFocused();
- const onOpenDetails =(id)=>{
-   navigation.navigate('Details',{
-     idCard:id,
-     message:'taken id ok!!!'
-   })
- }
+
    const fetchAllData = ()=>{
     return new Promise((resolve,reject)=>{
         dbSqlite.dbOpen().transaction((tx)=>{

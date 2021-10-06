@@ -1,9 +1,8 @@
 import React from 'react'
-import Details from '../screens/NestingRouteCatalog/Details'
-import ResultSearch from '../screens/NestingSearch/ResultSearch'
 import Search from '../screens/Search'
 import {createStackNavigator,TransitionPresets} from '@react-navigation/stack'
 import SearchPage from './../screens/NestingSearch/SearchPage';
+import Details from '../screens/DetailPage/Details';
 
 const StackSearch = () => {
     const Stack = createStackNavigator();
@@ -25,7 +24,6 @@ const StackSearch = () => {
             animation="fade"
             children={()=>(<SearchPage />)} />  
             <Stack.Screen name="Details" children={()=>(<Details />)}/>
-            <Stack.Screen name="ResultSearch" children={()=>(<ResultSearch />)}/>
         </Stack.Navigator>
     )
 }

@@ -1,8 +1,8 @@
 import React from 'react'
 import Catalog from '../screens/Catalog'
-import Details from '../screens/NestingRouteCatalog/Details'
 import EditFormScreen from '../screens/NestingRouteCatalog/EditFormScreen'
 import {createStackNavigator,TransitionPresets} from '@react-navigation/stack'
+import Details from '../screens/DetailPage/Details'
 
 const StackCatalog = () => {
     const Stack = createStackNavigator();

@@ -50,7 +50,7 @@ const FLatListRentals = (props) => {
              renderItem={({item,index})=>(
                  // <View >
                  <TouchableOpacity
-                 onPress={()=>onOpenDetails(item.rental_id)}
+                 onPress={()=>onOpenDetails(item.rental_id,'Details')}
                    style={{
                    flexDirection:'column',
                    marginBottom:SPACING,

@@ -11,6 +11,7 @@ import StackCatalog from './StackCatalog';
 const BottomTabMainPage = () => {
     const {height,width} = Dimensions.get('screen')
     const BottomTab = createBottomTabNavigator();
+
     return (
         <BottomTab.Navigator
       initialRouteName="Search"
@@ -60,8 +61,7 @@ const BottomTabMainPage = () => {
 
       })}
       >
-         <BottomTab.Screen name="SearchRoutes" component={StackSearch}/>
-         <BottomTab.Screen name="List" children={StackCatalog}/>
+         <BottomTab.Screen name="SearchRoutes" children={()=><StackSearch/>}/>
          <BottomTab.Screen 
          name="AddData" 
          children={()=>(<AddData />)}
@@ -78,8 +78,7 @@ const BottomTabMainPage = () => {
            tabBarShowLabel:false
          })}  
          />
-         <BottomTab.Screen name="WishList" component={WishList}/>
-         <BottomTab.Screen name="Explore" component={Explore}/>
+         <BottomTab.Screen name="List" children={()=><StackCatalog/>}/>
 
       </BottomTab.Navigator>
     )
