@@ -1,36 +1,116 @@
 import React from 'react'
-import { View,Text } from 'react-native'
+import { View,Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
 
 const BottomContent = () => {
+  const {width} = Dimensions.get('window')
     return (
-        <View style={{flex:1,alignItems:'center'}}>
-        <Text>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec
-      semper turpis. Ut in fringilla nisl, sit amet aliquet urna. Donec
-      sollicitudin libero sapien, ut accumsan justo venenatis et. Proin iaculis
-      ac dolor eget malesuada. Cras commodo, diam id semper sodales, tortor leo
-      suscipit leo, vitae dignissim velit turpis et diam. Proin tincidunt
-      euismod elit, at porttitor justo maximus vel. Proin viverra, nibh non
-      accumsan sollicitudin, arcu metus sagittis nunc, et tempor tellus ligula
-      et justo. Pellentesque ultrices fermentum efficitur. Lorem ipsum dolor sit
-      amet, consectetur adipiscing elit. Praesent nec convallis nisl, et rhoncus
-      mauris. Morbi consequat sem tellus, in scelerisque lorem vehicula ut.
-      {'\n\n'}Nam vel imperdiet massa. Donec aliquet turpis quis orci fermentum,
-      eget egestas tellus suscipit. Sed commodo lectus ac augue mattis, a
-      pulvinar metus venenatis. Vestibulum cursus rhoncus mauris, fringilla
-      luctus risus eleifend ut. Vestibulum efficitur imperdiet scelerisque.
-      Pellentesque sit amet lorem bibendum, congue dolor suscipit, bibendum est.
-      Aenean leo nibh, varius vel felis nec, sagittis posuere nunc. Vestibulum
-      ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia
-      curae; Duis ullamcorper laoreet orci, ac tempus dui aliquet et. Morbi
-      porta nisi sed augue vestibulum tristique. Donec nisi ligula, efficitur at
-      arcu et, sagittis imperdiet urna. Sed sollicitudin nisi eget pulvinar
-      ultricies. Ut sit amet dolor luctus massa dapibus tincidunt non posuere
-      odio. Aliquam sit amet vehicula nisi.
-        </Text>
-
+        <View style={{flex:1,backgroundColor:'#fff'}}>
+        <View style={styles.discoverWrap}>
+          <Text style={styles.textHeadingDiscover}>Discover things to do</Text>
+          <View style={styles.contentDiscover}>
+            <View>
+              <Image
+              style={styles.image1}
+               source={require('../../../assets/images/imageContent1.jpg')}/>
+              <Text style={styles.textTitle}>Experiences</Text>
+              <Text style={styles.smallText}>Find unforgettable activities</Text>
+            </View>
+            <View>
+              <Image
+              style={styles.image1}
+               source={require('../../../assets/images/imageContent2.jpg')}/>
+              <Text style={styles.textTitle}>Features</Text>
+              <Text style={styles.smallText}>Travel from your home</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.card}>
+          <Text style={styles.headingTextCard}>RentalZ Application</Text>
+          <Text style={styles.textCard}>All things you want to make differences, we always bring for you an amazing experience with your space.</Text>
+          <TouchableOpacity
+          style={styles.btn}
+          >
+            <Text style={{fontSize:15,fontWeight:'bold'}}>Learn More</Text>
+          </TouchableOpacity>
+          <Image 
+          style={styles.image2}
+          source={require('../../../assets/images/imageContent3.jpg')}/>
+        </View>
         </View>
     )
+
 }
+const styles = StyleSheet.create({
+   discoverWrap:{
+     flexDirection:'column',
+     margin:20
+   },
+   image1:{
+     width:150,
+     height:150,
+     borderRadius:10,
+     shadowColor:'#fff',
+     shadowOffset:{width:0,height:12},
+     shadowOpacity:.5,
+     shadowRadius:10,
+   },
+   textHeadingDiscover:{
+     fontSize:25,
+     fontWeight:'bold',
+     marginBottom:20
+   },
+   contentDiscover:{
+     flexDirection:'row',
+     justifyContent:'space-between'
+   },
+   textTitle:{
+     fontSize:18,
+     fontWeight:'bold',
+     marginTop:7
+   },smallText:{
+     fontSize:12
+     ,marginTop:2
+    },
+    btn:{
+      width:120,
+      height:40,
+      borderRadius:7,
+      backgroundColor:'#fff',
+      marginBottom:40,
+      marginTop:20,
+      display:'flex',
+      justifyContent:'center',
+      alignItems:'center',
+      padding:5
+    },
+    image2:{
+      height:200,
+      width:'100%',
+      borderBottomLeftRadius:15,
+      borderBottomRightRadius:15
+    },
+    card:{
+      flexDirection:'column',
+      alignItems:'center',
+      margin:20,
+      borderRadius:15,
+      backgroundColor:'#191919',
+    },
+    textCard:{
+      paddingLeft:50,
+      paddingRight:50,
+      color:'#fff',
+      textAlign:'center',
+      letterSpacing:0.5,
+      lineHeight:19
+    },
+    headingTextCard:{
+      fontSize:25,
+      fontWeight:'bold',
+      color:'#fff',
+      marginTop:25,
+      marginBottom:10
+    }
+})
 
 export default BottomContent
