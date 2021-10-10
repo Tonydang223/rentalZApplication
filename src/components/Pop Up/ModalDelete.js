@@ -5,7 +5,6 @@ import * as Progress from 'react-native-progress'
 import * as Animatable from 'react-native-animatable'
 const ModalDelete = ({show,status,setShow,deletePicture,id,setStatus}) => {
     const {height,width} = Dimensions.get('screen')
-    console.log(id)
     const onClick = ()=>{
         setShow(false)
     }

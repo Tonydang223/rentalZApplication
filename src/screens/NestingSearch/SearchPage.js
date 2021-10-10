@@ -13,7 +13,6 @@ const SearchPage = () => {
         emptyData:false
     })
     const [data,setData] = useState([])
-    console.log(dataSearch)
     const isFocused = useIsFocused();
     const navigation = useNavigation()
     const [show,setShow] = useState(false)
@@ -33,9 +32,12 @@ const SearchPage = () => {
            setSearch(text)
        } 
     }
+
     const openDetails =(id)=>{
+        const findData = data.find((item)=>item.rental_id === id) 
         navigation.navigate('Details',{
           idCard:id,
+          objData:findData,
           message:'taken id successfully!!!'
         })
       }
@@ -65,7 +67,10 @@ const SearchPage = () => {
     }
     console.log(search)
     const onClick = ()=>{
-        navigation.goBack()
+        Keyboard.dismiss()
+        setTimeout(()=>{
+            navigation.goBack()
+        },100)
     }
     const onClickClose = ()=>{
         setSearch('')
@@ -73,12 +78,13 @@ const SearchPage = () => {
         setDataSearch({...dataSearch,data:data})
     }
     useEffect(()=>{
-        getData()
           if(isFocused){
             setTimeout(()=>{
                 refFocus.current.focus()
             },100)
+            getData()
           }
+        return ()=>!isFocused
     },[isFocused])
 
     return (

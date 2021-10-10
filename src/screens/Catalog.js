@@ -14,8 +14,10 @@ const Catalog = () => {
     empty:false
  })
  const onOpenDetails =(id)=>{
+   const findData = rentalData.data.find(item=>item.rental_id === id)
   navigation.navigate('Details',{
     idCard:id,
+    objData:findData,
     message:'taken id ok!!!'
   })
 }
@@ -67,10 +69,13 @@ const Catalog = () => {
       setTimeout(()=>{
         setStatus('')
         setShow(false)
-      },6000)
+      },4000)
     }
-    requestLibrary();
-    
+    requestLibrary()
+    return ()=>{
+      fetchAllData()
+      requestLibrary();
+    }
   },[isFocused,status])
     const deletePicture = async(id)=>{
         await dbSqlite.dbOpen().transaction((tx)=>{

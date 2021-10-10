@@ -2,7 +2,6 @@ import React from 'react'
 import { View,Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
 
 const BottomContent = () => {
-  const {width} = Dimensions.get('window')
     return (
         <View style={{flex:1,backgroundColor:'#fff'}}>
         <View style={styles.discoverWrap}>

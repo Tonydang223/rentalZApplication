@@ -2,8 +2,6 @@ import React from 'react'
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 import Icon from 'react-native-vector-icons/Ionicons'
 import AddData from '../screens/AddData';
-import WishList from '../screens/WishList';
-import Explore from '../screens/Explore';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import StackSearch from './StackSearch';
 import StackCatalog from './StackCatalog';
@@ -26,13 +24,6 @@ const BottomTabMainPage = () => {
           }else if(route.name==="List"){
             iconName=focused?'list':'list-outline'
             color=focused?'#22A7F0':'#000000'
-          }else if(route.name==="WishList"){
-            iconName=focused?'heart':'heart-outline'
-            color=focused?'#22A7F0':'#000000'
-          }
-          else if(route.name==="Explore"){
-            iconName=focused?'map':'map-outline'
-            color=focused?'#22A7F0':'#000000'
           }
 
           return (<Icon name={iconName} size={size} color={color}/>)
@@ -45,12 +36,6 @@ const BottomTabMainPage = () => {
              }
              else if(route.name==="AddData"){
               return null
-             }
-             else if(route.name==="WishList"){
-              return focused ?(<Text style={styles.label}>WishList</Text>):null
-             }
-             else if(route.name==="Explore"){
-              return focused ?(<Text style={styles.label}>Map</Text>):null
              }
         },
         tabBarInactiveTintColor:'#383838',
