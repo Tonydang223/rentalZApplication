@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { StyleSheet, View, Text, ScrollView, Image, Animated } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Image, Animated,Share } from 'react-native';
 import { useRoute,useNavigation } from '@react-navigation/native';
 import BottomContentDetail from './BottomContentDetail';
 import TopContentDetail from './TopContentDetail';
@@ -10,9 +10,41 @@ const Details = () => {
     const navigation = useNavigation()
     const {idCard,objData} = route.params
     const scrollDetail = useRef(new Animated.Value(0)).current
+
+    const onShare = async () => {
+        try {
+          const result = await Share.share({
+            message:`
+            Property Type: ${objData.property}
+            Name: ${objData.name}
+            Bed Room: ${objData.bedRoom}
+            Furniture Type: ${objData.furType}
+            Created At: ${objData.createdAt}
+            Price: ${'$'+objData.price}
+            `,
+            title:`The Post ${objData.rental_id}`,
+            url:objData.image,
+          });
+          if (result.action === Share.sharedAction) {
+            if (result.activityType) {
+              console.log('share with active')
+            } else {
+              // clg
+             console.log('Shared')
+            }
+          } else if (result.action === Share.dismissedAction) {
+            console.log('dont share')
+          }
+        } catch (error) {
+          alert(error.message);
+        }
+      };
     return (
         <View>
-        <TopContentDetail navigation={navigation} scrollDetail={scrollDetail}/>
+        <TopContentDetail navigation={navigation} 
+        scrollDetail={scrollDetail}
+        onShare={onShare}
+        />
         <Animated.ScrollView
         onScroll={Animated.event(
             [{nativeEvent:{contentOffset:{y:scrollDetail}}}],
@@ -48,13 +80,13 @@ const styles = StyleSheet.create({
         transform:[
             {
                 translateY:scrollDetail.interpolate({
-                  inputRange:[-400,0,400,401],
-                  outputRange:[-200,0,300,300]
+                  inputRange:[-360,0,360,361],
+                  outputRange:[-180,0,240,240]
                 })
             },
             {
                 scale:scrollDetail.interpolate({
-                    inputRange:[-400,0,400,401],
+                    inputRange:[-360,0,360,361],
                     outputRange:[2,1,0.5,0.5]
                 })
             }

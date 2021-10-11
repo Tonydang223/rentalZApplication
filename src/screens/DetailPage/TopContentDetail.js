@@ -3,7 +3,7 @@ import { Dimensions, StatusBar, StyleSheet, View } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 const TopContentDetail = (props) => {
-    const {navigation,scrollDetail} = props
+    const {navigation,scrollDetail,onShare} = props
     const safeArea =useSafeAreaInsets()
     const {width} = Dimensions.get('window')
     const goBackSearch = ()=>{
@@ -16,7 +16,7 @@ const TopContentDetail = (props) => {
           return
       }
       const listener = scrollDetail.addListener(a=>{
-          const topNavOffSet = 400 -(70+safeArea.top) - safeArea.top*2
+          const topNavOffSet = 360 -(70+safeArea.top) - safeArea.top
           if(isTransparentD && a.value > topNavOffSet){
               setIsTransparentD(false)
           }else if(!isTransparentD && a.value < topNavOffSet){
@@ -44,7 +44,9 @@ const TopContentDetail = (props) => {
             <Icon name={isTransparentD?'arrow-redo-circle':"arrow-redo-outline"} 
             size={33} 
             color={isTransparentD?'#fff':'#000'}
-            style={{marginBottom:10,marginTop:15}}/>
+            style={{marginBottom:10,marginTop:15}}
+            onPress = {()=>onShare()}
+            />
         </View>
             
         </View>
