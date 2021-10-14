@@ -30,7 +30,7 @@ const Catalog = () => {
     return new Promise((resolve,reject)=>{
         dbSqlite.dbOpen().transaction((tx)=>{
           tx.executeSql(
-            "SELECT * FROM rentalZ",
+            "SELECT * FROM rental",
             [],
             (tx,result)=>{
               let itemArray = []
@@ -79,7 +79,7 @@ const Catalog = () => {
   },[isFocused,status])
     const deletePicture = async(id)=>{
         await dbSqlite.dbOpen().transaction((tx)=>{
-          tx.executeSql("DELETE FROM rentalZ WHERE rental_id=?",
+          tx.executeSql("DELETE FROM rental WHERE rental_id=?",
           [id],
           (tx,result)=>{
             // const arryF= rentalData.data.filter(item=>item.rental_id !== 2)
@@ -110,7 +110,7 @@ const Catalog = () => {
     console.log(result)
     const img = !result.cancelled?result.uri:null
     await dbSqlite.dbOpen().transaction((tx)=>{
-      tx.executeSql("UPDATE rentalZ SET image=? WHERE rental_id=?",
+      tx.executeSql("UPDATE rental SET image=? WHERE rental_id=?",
       [img,id],
       (tx,result)=>{
         console.log('ok do')

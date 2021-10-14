@@ -43,7 +43,7 @@ const SearchPage = () => {
       }
     const getData = async()=>{
         await dbSqlite.dbOpen().transaction((tx)=>{
-            tx.executeSql('SELECT * FROM rentalZ',
+            tx.executeSql('SELECT * FROM rental',
             [],
             (tx,result)=>{
                 let ArrayItem = []

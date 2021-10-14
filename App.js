@@ -17,15 +17,16 @@ export default function App() {
   },[])
   const createTableData = async()=>{
     await dbSqlite.dbOpen().transaction((tx)=>{
-      tx.executeSql(`CREATE TABLE IF NOT EXISTS rentalZ 
+      tx.executeSql(`CREATE TABLE IF NOT EXISTS rental 
       (rental_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        property TEXT(150),
+        property TEXT,
         bedRoom VARCHAR(100) NOT NULL, 
         createdAt TIMESTAMP NOT NULL, 
         price NUMERIC NOT NULL, 
         furType VARCHAR(100), 
-        note TEXT(500), 
-        name VARCHAR(100), 
+        note TEXT, 
+        name TEXT,
+        updatedAt TIMESTAMP NOT NULL, 
         image BLOB NOT NULL)`,
         (tx,result)=>{},
         (error)=>{console.log("Error",error)}

@@ -14,7 +14,7 @@ const AddData = () => {
     const [status,setStatus] = useState('')
     useEffect(()=>{
         handleContentPopUp();
-    },[status])
+    },[status,isFocused])
     const handleContentPopUp = ()=>{
         if(status === 'error'){
             setContents(contentPopUp.error)
@@ -34,6 +34,7 @@ const AddData = () => {
             <Text style={styles.textHeading}>RentalZ</Text>
             <TextForm setStatus={setStatus} setShow={setShow} status={status}
             navigation={navigation}
+            isFocused={isFocused}
             />
         </View>
         </KeyBoardAvoidViewWrapper>

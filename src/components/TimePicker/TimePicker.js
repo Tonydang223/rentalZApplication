@@ -3,23 +3,30 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { StyleSheet, Text, View } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import {formatISO, formatISO9075,formatRFC7231} from 'date-fns'
-const TimePicker = ({values,setValues,setError,error}) => {
+const TimePicker = ({values,setValues,setError,error,updatedAt,isFocused}) => {
     const {dateTime} = values
-    const [date,setDate] = useState(new Date())
+    const [date,setDate] = useState((updatedAt||!isFocused)?new Date(updatedAt):new Date())
     const [mode,setMode] = useState('date')
     const [visible, setVisible] = useState(false)
+    console.log({dateT:dateTime,updatedAt:values.updatedAt})
     const onChange = (e,selectedDate)=>{
         const currentDate = selectedDate || date
-        if(Platform.OS === "android"){
-            setVisible(false)
-        }
-        setDate(currentDate)
-        console.log(currentDate)
-
         const timeAndDate = new Date(currentDate)
         const dateChoose = timeAndDate.toDateString()
         const timeChoose = formatISO9075(timeAndDate,{representation:'time'})
-        setValues({...values,dateTime:`${dateChoose} - ${timeChoose}`})
+        if(Platform.OS === "android"){
+            setVisible(false)
+        } 
+        
+        if(e.type == "set"){
+            setDate(currentDate)
+            console.log(currentDate)
+            setValues({...values,dateTime:`${dateChoose} - ${timeChoose}`,updatedAt:timeAndDate.toISOString()})
+        }else if(e.type == "dismissed"){
+            setDate(currentDate)
+            setValues({...values,dateTime:'',updatedAt:''})
+        }
+
         if(dateTime !== '' || dateTime !== null){
             setError((pre)=>{
                 return{...pre,dateTime:null}

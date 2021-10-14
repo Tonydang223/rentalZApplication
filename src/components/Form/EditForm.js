@@ -10,7 +10,7 @@ import TimePicker from '../TimePicker/TimePicker';
 import { pickerStyles, styles } from './styles';
 
 const EditForm = ({dataObj,setEditVisible,setStatus}) => {
-    const {createdAt,price} = dataObj
+    const {createdAt,price,updatedAt} = dataObj
     const dataObjNew = {...dataObj,dateTime:createdAt,price:price.toString()}
 
     const [values,setValues] = useState(dataObjNew)
@@ -22,7 +22,7 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
         const {property,bedRoom,dateTime,price,furType,note,name,rental_id}=value
         const parsePrice = parseFloat(price)
        await dbSqlite.dbOpen().transaction((tx)=>{
-           tx.executeSql(`UPDATE rentalZ SET 
+           tx.executeSql(`UPDATE rental SET 
            property=?, 
            bedRoom=?,
            createdAt=?,
@@ -47,17 +47,11 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
     const onChange = (name)=>(value)=>{
          setValues({...values,[name]:value})
 
-         if(value !== ""){
+         if(value !== "" || value!==null){
              setError((pre)=>{
                  return{...pre,[name]:null}
              })
          }
-
-         if(value !== null){
-            setError((pre)=>{
-                return{...pre,[name]:null}
-            })
-        }
 
     }
     
@@ -66,6 +60,10 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
         if(!values.property){
             setError((pre)=>{
                 return {...pre,property:'This field must be required'}
+            })
+        }else if(values.property.length > 25){
+            setError((pre)=>{
+                return {...pre,property:'The property not too 25 characters'}
             })
         }
         if(!values.bedRoom){
@@ -88,6 +86,10 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
             setError((pre)=>{
                 return {...pre,name:'This field must be required'}
             })
+        }else if(values.name.length>20){
+            setError((pre)=>{
+                return {...pre,name:'The name is not too 20 characters'}
+            })
         }
         if(!values.dateTime){
             setError((pre)=>{
@@ -103,7 +105,14 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
             setEditVisible(true)
         }
         
-        if(value.name !== ''&& value.price!=='' &&value.bedRoom!==null&&value.property!==''&&value.dateTime !== ''){
+        if(value.name !== ''
+        && value.price!=='' 
+        &&value.bedRoom!==null
+        &&value.property!==''
+        &&value.dateTime !== ''
+        &&value.property.length<25
+        &&value.name.length<20
+        ){
             setEditVisible(true)
             setStatus('loading')
             updateData(value)
@@ -147,7 +156,13 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
             <ErrorMessage error={error.bedRoom}/>
         )}
         <Text style={styles.label}>Date and Time</Text>
-        <TimePicker values={values} setValues={setValues} setError={setError} error={error}/>
+        <TimePicker 
+        values={values} 
+        setValues={setValues} 
+        setError={setError} 
+        error={error}
+        updatedAt={updatedAt}
+        />
         {!error.dateTime?null:(
             <ErrorMessage error={error.dateTime}/>
         )}

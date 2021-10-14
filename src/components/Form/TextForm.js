@@ -8,7 +8,7 @@ import { FUR_OPTIONS } from '../../constants/furnishedOptions';
 import ErrorMessage from '../ErrorMes/ErrorMessage';
 import dbSqlite from '../../../configs/dbOpen';
 import { pickerStyles, styles } from './styles';
-const TextForm = ({setStatus,setShow,navigation,status}) => {
+const TextForm = ({setStatus,setShow,isFocused}) => {
     const initialValues = {
         property:'',
         bedRoom:null,
@@ -18,21 +18,22 @@ const TextForm = ({setStatus,setShow,navigation,status}) => {
         note:'',
         name:'',
         img:'https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+        updatedAt:''
     }
     const [values,setValues] = useState(initialValues)
     const [error,setError]  = useState({})
     const boderColorSelectbedRoom = error.bedRoom?'#CF000F':'#000000'
      // insert Data
      const InsertData = async(value) =>{
-         const {property,bedRoom,dateTime,price,furType,note,name,img} = value
+         const {property,bedRoom,dateTime,price,furType,note,name,img,updatedAt} = value
          const parsePrice = parseFloat(price)
          await dbSqlite.dbOpen().transaction((tx)=>{
              tx.executeSql(`
-             INSERT INTO rentalZ
-             (property,bedRoom,createdAt,price,furType,note,name,image)
-             VALUES (?,?,?,?,?,?,?,?)
+             INSERT INTO rental
+             (property,bedRoom,createdAt,price,furType,note,name,updatedAt,image)
+             VALUES (?,?,?,?,?,?,?,?,?)
              `,
-             [property,bedRoom,dateTime,parsePrice,furType,note,name,img],
+             [property,bedRoom,dateTime,parsePrice,furType,note,name,updatedAt,img],
              (tx,result)=>{
                  setTimeout(()=>{
                     setStatus('success')
@@ -48,17 +49,11 @@ const TextForm = ({setStatus,setShow,navigation,status}) => {
     const onChange = (name)=>(value)=>{
          setValues({...values,[name]:value})
 
-         if(value !== ""){
+         if(value !== "" || value !== null){
              setError((pre)=>{
                  return{...pre,[name]:null}
              })
          }
-
-         if(value !== null){
-            setError((pre)=>{
-                return{...pre,[name]:null}
-            })
-        }
 
     }
     
@@ -67,6 +62,10 @@ const TextForm = ({setStatus,setShow,navigation,status}) => {
         if(!values.property){
             setError((pre)=>{
                 return {...pre,property:'This field must be required'}
+            })
+        }else if(values.property.length > 25){
+            setError((pre)=>{
+                return {...pre,property:'The property not too 25 characters'}
             })
         }
         if(!values.bedRoom){
@@ -89,6 +88,10 @@ const TextForm = ({setStatus,setShow,navigation,status}) => {
             setError((pre)=>{
                 return {...pre,name:'This field must be required'}
             })
+        }else if(values.name.length>20){
+            setError((pre)=>{
+                return {...pre,name:'The name is not too 20 characters'}
+            })
         }
         if(!values.dateTime){
             setError((pre)=>{
@@ -105,7 +108,14 @@ const TextForm = ({setStatus,setShow,navigation,status}) => {
         }
             
         
-        if(value.name !== ''&& value.price!=='' &&value.bedRoom!==null&&value.property!==''&&value.dateTime !== ''){
+        if(value.name !== ''
+        && value.price!=='' 
+        &&value.bedRoom!==null
+        &&value.property!==''
+        &&value.dateTime !== ''
+        &&value.property.length<25
+        &&value.name.length<20
+        ){
             setShow(true) 
             setStatus('loading')
             InsertData(value)
@@ -149,7 +159,13 @@ const TextForm = ({setStatus,setShow,navigation,status}) => {
             <ErrorMessage error={error.bedRoom}/>
         )}
         <Text style={styles.label}>Date and Time</Text>
-        <TimePicker values={values} setValues={setValues} setError={setError} error={error}/>
+        <TimePicker 
+        values={values} 
+        setValues={setValues} 
+        setError={setError} 
+        error={error}
+        isFocused={isFocused}
+        />
         {!error.dateTime?null:(
             <ErrorMessage error={error.dateTime}/>
         )}
