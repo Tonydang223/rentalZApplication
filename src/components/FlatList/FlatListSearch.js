@@ -26,9 +26,9 @@ const FlatListSearch = (props) => {
                   <Text style={styles.textPrice}>${item.price} </Text>
                       <Text style={{fontSize:14,color:'#999894',marginTop:4.5}}>/per night</Text>
                   </View>
-                <Text style={{fontSize:22,fontWeight:'bold'}}>{item.property}</Text>
+                <Text style={{fontSize:22,fontWeight:'bold',textTransform:'capitalize'}}>{item.property}</Text>
                 <View style={[styles.middle,{flexDirection:'row'}]}>
-                    <Text style={{fontSize:13.5,marginTop:0.5,color:'#999894'}}>By {item.name}</Text>
+                    <Text style={{fontSize:13.5,marginTop:0.5,color:'#999894',textTransform:'capitalize'}}>By {item.name}</Text>
                     <Icon 
                     name='calendar-outline' 
                     size={16} 
@@ -50,8 +50,10 @@ const FlatListSearch = (props) => {
                     <Text style={{marginLeft:5,marginTop:1}}>{item.bedRoom}</Text>
                 </View>
                 <View style={[styles.iconhome,{flexDirection:'row'}]}>
-                <Icon name="home" size={18} color="#000"/>
-                    <Text style={{marginLeft:4,marginTop:2,textTransform:'capitalize'}}>{item.furType}</Text>
+                <Icon 
+                style={{marginTop:2}}
+                name="home" size={16} color="#000"/>
+                    <Text style={{marginLeft:3,marginTop:2,textTransform:'capitalize',fontSize:13}}>{item.furType?item.furType:'None'}</Text>
                 </View>
                 </View>
                   </View>
@@ -93,7 +95,7 @@ const styles = StyleSheet.create({
       
   },
   iconhome:{
-      marginLeft:15,
+      marginLeft:12,
   }
 })
 

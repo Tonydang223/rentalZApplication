@@ -3,8 +3,9 @@ import {View,Text,Modal, StyleSheet,TouchableOpacity} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as Progress from 'react-native-progress'
 import * as Animatable from 'react-native-animatable'
-const ModalError = ({contents,show,status,setShow}) => {
-    
+import BoxConfirm from './BoxConfirm'
+const ModalError = (props) => {
+    const {contents,show,status,setShow,initialValues,values,InsertData,setStatus,setDateAdd,setValues} = props
 
     const onClick = ()=>{
       setShow(false) 
@@ -26,7 +27,19 @@ const ModalError = ({contents,show,status,setShow}) => {
             </View>)
             :(
                 <View style={styles.modalWrapper}>
-                <Animatable.View 
+                {status === 'confirm'?(
+                    <BoxConfirm 
+                    values={values}
+                    setShow={setShow}
+                    setStatus={setStatus}
+                    InsertData={InsertData}
+                    values={values}
+                    initialValues={initialValues}
+                    setDateAdd={setDateAdd}
+                    setValues={setValues}
+                    />
+                ):(
+                    <Animatable.View 
                 style={styles.box}
                 animation="bounceIn"
                 duration={2000}
@@ -58,6 +71,8 @@ const ModalError = ({contents,show,status,setShow}) => {
                 </TouchableOpacity>
                </View>
             </Animatable.View>
+                )}
+                
             </View>
             )}
         </Modal>

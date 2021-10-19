@@ -3,12 +3,10 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { StyleSheet, Text, View } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import {formatISO, formatISO9075,formatRFC7231} from 'date-fns'
-const TimePicker = ({values,setValues,setError,error,updatedAt,isFocused}) => {
+const TimePicker = ({values,setValues,setError,error,date,setDate}) => {
     const {dateTime} = values
-    const [date,setDate] = useState((updatedAt||!isFocused)?new Date(updatedAt):new Date())
     const [mode,setMode] = useState('date')
     const [visible, setVisible] = useState(false)
-    console.log({dateT:dateTime,updatedAt:values.updatedAt})
     const onChange = (e,selectedDate)=>{
         const currentDate = selectedDate || date
         const timeAndDate = new Date(currentDate)
@@ -20,11 +18,7 @@ const TimePicker = ({values,setValues,setError,error,updatedAt,isFocused}) => {
         
         if(e.type == "set"){
             setDate(currentDate)
-            console.log(currentDate)
             setValues({...values,dateTime:`${dateChoose} - ${timeChoose}`,updatedAt:timeAndDate.toISOString()})
-        }else if(e.type == "dismissed"){
-            setDate(currentDate)
-            setValues({...values,dateTime:'',updatedAt:''})
         }
 
         if(dateTime !== '' || dateTime !== null){

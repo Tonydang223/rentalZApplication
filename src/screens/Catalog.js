@@ -64,7 +64,7 @@ const Catalog = () => {
     if(status === 'pending'){
       setTimeout(()=>{
          setStatus('success')
-      },2000)
+      },3000)
     }else if(status === 'success'){
       setTimeout(()=>{
         setStatus('')

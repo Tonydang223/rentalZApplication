@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View,Text } from 'react-native';
 import KeyBoardAvoidViewWrapper from '../components/KeyBoardAvoidView/KeyBoardAvoidViewWrapper';
-import ModalError from '../components/Pop Up/ModalError';
 import contentPopUp from '../constants/contentPopUp';
 import TextForm from './../components/Form/TextForm';
 import {useNavigation,useIsFocused} from '@react-navigation/native'
@@ -14,27 +13,26 @@ const AddData = () => {
     const [status,setStatus] = useState('')
     useEffect(()=>{
         handleContentPopUp();
-    },[status,isFocused])
+    },[status])
     const handleContentPopUp = ()=>{
         if(status === 'error'){
             setContents(contentPopUp.error)
         }else if(status === 'success'){
             setContents(contentPopUp.success)
-        }else if(status === 'loading'){
+        }else if(status === 'loading' || status === 'confirm'){
             setContents({})
         }
     }
     return (
         <KeyBoardAvoidViewWrapper>
         <View style={styles.wrapper}>
-            <ModalError contents={contents} status={status} show={show} 
-            setShow={setShow}
-            navigation={navigation}
-            />
             <Text style={styles.textHeading}>RentalZ</Text>
-            <TextForm setStatus={setStatus} setShow={setShow} status={status}
+            <TextForm setStatus={setStatus} 
+            setShow={setShow} 
+            status={status}
             navigation={navigation}
-            isFocused={isFocused}
+            contents={contents}
+            show={show}
             />
         </View>
         </KeyBoardAvoidViewWrapper>

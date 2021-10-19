@@ -36,14 +36,14 @@ const BottomContentDetail = (props) => {
                <Icon name="home-outline" size={30} color="rgb(0, 71, 171)" style={{marginTop:4.5}}/>
                <View style={{padding:5,marginLeft:13,}}>
                <Text style={styles.textHeadIcons}>Furniture Type</Text>
-               <Text style={[styles.textIcon,{textTransform:'capitalize'}]}>{objData&&objData.furType}</Text>
+               <Text style={[styles.textIcon,{textTransform:'capitalize'}]}>{objData&&objData.furType?objData.furType:'None'}</Text>
                </View>
            </View>
            <View style={{flexDirection:'row',marginBottom:7}}>
                <Icon name="cash-outline" size={30} color="rgb(0, 71, 171)" style={{marginTop:4.5}}/>
                <View style={{padding:5,marginLeft:13,}}>
                <Text style={styles.textHeadIcons}>Monthly Price</Text>
-               <Text style={[styles.textIcon,{textTransform:'capitalize'}]}>{objData&&objData.price}</Text>
+               <Text style={[styles.textIcon,{textTransform:'capitalize'}]}>${objData&&objData.price}</Text>
                </View>
            </View>
 
@@ -65,7 +65,8 @@ const styles = StyleSheet.create({
    },
    textHeadingProper:{
     fontSize:40,
-    marginBottom:8
+    marginBottom:8,
+    textTransform:'capitalize'
    },
    textSmallProper:{
     fontSize:15
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
     },
     textIcon:{
         fontSize:16,
-        letterSpacing:1.2
+        letterSpacing:1.7
     },
     textHeadIcons:{
         fontSize:19,

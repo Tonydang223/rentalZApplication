@@ -16,10 +16,12 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
     const [values,setValues] = useState(dataObjNew)
     console.log(values)
     const [error,setError]  = useState({})
+    const [dateEdit,setDateEdit] = useState(new Date(updatedAt))
+
     const boderColorSelectbedRoom = error.bedRoom?'#CF000F':'#000000'
      // update Data
     const updateData = async(value)=>{
-        const {property,bedRoom,dateTime,price,furType,note,name,rental_id}=value
+        const {property,bedRoom,dateTime,price,furType,note,name,updatedAt,rental_id}=value
         const parsePrice = parseFloat(price)
        await dbSqlite.dbOpen().transaction((tx)=>{
            tx.executeSql(`UPDATE rental SET 
@@ -29,8 +31,10 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
            price=?,
            furType=?,
            note=?,
-           name=? WHERE rental_id = ? `,
-           [property,bedRoom,dateTime,parsePrice,furType,note,name,rental_id],
+           name=?,
+           updatedAt=?
+           WHERE rental_id = ? `,
+           [property,bedRoom,dateTime,parsePrice,furType,note,name,updatedAt,rental_id],
            (tx,result)=>{
             setTimeout(()=>{
                 setStatus('success')
@@ -80,6 +84,10 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
         if(!values.price){
             setError((pre)=>{
                 return {...pre,price:'This field must be required'}
+            })
+        }else if(parseInt(values.price)<=0){
+            setError((pre)=>{
+                return {...pre,price:'Price must be bigger than 0'}
             })
         }
         if(!values.name){
@@ -161,7 +169,8 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
         setValues={setValues} 
         setError={setError} 
         error={error}
-        updatedAt={updatedAt}
+        date={dateEdit}
+        setDate={setDateEdit}
         />
         {!error.dateTime?null:(
             <ErrorMessage error={error.dateTime}/>

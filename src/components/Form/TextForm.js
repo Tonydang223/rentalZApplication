@@ -8,7 +8,9 @@ import { FUR_OPTIONS } from '../../constants/furnishedOptions';
 import ErrorMessage from '../ErrorMes/ErrorMessage';
 import dbSqlite from '../../../configs/dbOpen';
 import { pickerStyles, styles } from './styles';
-const TextForm = ({setStatus,setShow,isFocused}) => {
+import ModalError from '../Pop Up/ModalError';
+const TextForm = (props) => {
+    const {setStatus,setShow,status,navigation,show,contents} = props
     const initialValues = {
         property:'',
         bedRoom:null,
@@ -22,6 +24,7 @@ const TextForm = ({setStatus,setShow,isFocused}) => {
     }
     const [values,setValues] = useState(initialValues)
     const [error,setError]  = useState({})
+    const [dateAdd,setDateAdd] = useState(new Date())
     const boderColorSelectbedRoom = error.bedRoom?'#CF000F':'#000000'
      // insert Data
      const InsertData = async(value) =>{
@@ -83,6 +86,10 @@ const TextForm = ({setStatus,setShow,isFocused}) => {
             setError((pre)=>{
                 return {...pre,price:'This field must be required'}
             })
+        }else if(parseInt(values.price)<=0){
+            setError((pre)=>{
+                return {...pre,price:'Price must be bigger than 0'}
+            })
         }
         if(!values.name){
             setError((pre)=>{
@@ -116,10 +123,8 @@ const TextForm = ({setStatus,setShow,isFocused}) => {
         &&value.property.length<25
         &&value.name.length<20
         ){
-            setShow(true) 
-            setStatus('loading')
-            InsertData(value)
-            setValues(initialValues)
+            setShow(true)
+            setStatus('confirm')
         }
     }
     const placeholder=(name)=> {
@@ -131,6 +136,19 @@ const TextForm = ({setStatus,setShow,isFocused}) => {
     }
     return (
         <View style={styles.formInside}>
+        <ModalError
+        contents={contents} 
+        status={status} 
+        show={show} 
+        setShow={setShow}
+        navigation={navigation}
+        InsertData={InsertData}
+        values={values}
+        initialValues={initialValues}
+        setStatus={setStatus}
+        setDateAdd={setDateAdd}
+        setValues={setValues}
+        />
         <Text style={styles.label}>Property Type</Text>
         <TextInput
             style={[styles.input,{borderColor:error.property?'#CF000F':'#000000'}]}
@@ -164,7 +182,8 @@ const TextForm = ({setStatus,setShow,isFocused}) => {
         setValues={setValues} 
         setError={setError} 
         error={error}
-        isFocused={isFocused}
+        date={dateAdd}
+        setDate={setDateAdd}
         />
         {!error.dateTime?null:(
             <ErrorMessage error={error.dateTime}/>
