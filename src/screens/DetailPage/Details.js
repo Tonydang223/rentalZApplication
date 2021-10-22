@@ -15,15 +15,15 @@ const Details = () => {
         try {
           const result = await Share.share({
             message:`
-            Property Type: ${objData.property}
+            Property Type: ${objData.propertyType}
             Name: ${objData.name}
             Bed Room: ${objData.bedRoom}
-            Furniture Type: ${objData.furType}
+            Furniture Type: ${objData.furTypes}
             Created At: ${objData.createdAt}
-            Price: ${'$'+objData.price}
+            Price: ${'$'+objData.monthlyPrice}
             `,
-            title:`The Post ${objData.rental_id}`,
-            url:objData.image,
+            title:`The Post ${objData.id}`,
+            url:objData.images,
           });
           if (result.action === Share.sharedAction) {
             if (result.activityType) {
@@ -54,7 +54,7 @@ const Details = () => {
         >
             <View style={styles.wrapper}>
                 <Animated.Image
-                    source={{uri:objData.image}}
+                    source={{uri:objData.images}}
                     style={styles.img(scrollDetail)}
                 />
                 <BottomContentDetail objData={objData}/>
@@ -64,7 +64,7 @@ const Details = () => {
         </View>
     )
 }
-const styles = StyleSheet.create({
+const styles = {
     wrapper:{
     marginTop:-1000,
     paddingTop:1000,
@@ -92,5 +92,5 @@ const styles = StyleSheet.create({
             }
         ]
     })
-})
+}
 export default Details

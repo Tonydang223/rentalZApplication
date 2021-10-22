@@ -1,12 +1,12 @@
 import React, { useEffect, useState,useCallback } from 'react'
 import { StyleSheet, View,Text, Image,FlatList,Button, Alert, TouchableWithoutFeedback,TouchableOpacity, TouchableHighlight } from 'react-native';
 import * as ImagePicker from 'expo-image-picker'
-import dbSqlite from '../../configs/dbOpen';
 import {useIsFocused} from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar';
 import {useNavigation} from '@react-navigation/native'
 import FLatListRentals from '../components/FlatList/FLatListRentals';
 import FlashMessage,{showMessage,hideMessage} from "react-native-flash-message";
+import { db } from '../../configs/dbOpen';
 const Catalog = () => {
   const navigation = useNavigation()
   const [rentalData,setRentalData] = useState({
@@ -14,7 +14,7 @@ const Catalog = () => {
     empty:false
  })
  const onOpenDetails =(id)=>{
-   const findData = rentalData.data.find(item=>item.rental_id === id)
+   const findData = rentalData.data.find(item=>item.id === id)
   navigation.navigate('Details',{
     idCard:id,
     objData:findData,
@@ -25,31 +25,28 @@ const Catalog = () => {
  const [show,setShow] = useState(false)
  const [status,setStatus] = useState('')
  const isFocused = useIsFocused();
-
-   const fetchAllData = ()=>{
-    return new Promise((resolve,reject)=>{
-        dbSqlite.dbOpen().transaction((tx)=>{
-          tx.executeSql(
-            "SELECT * FROM rental",
-            [],
-            (tx,result)=>{
-              let itemArray = []
-              const len = result.rows.length
-              if(len>0){
-                for(let i = 0;i<len;++i){
-                  itemArray.push(result.rows.item(i))
-                  setRentalData({...rentalData,data:itemArray,empty:false})
+console.log(rentalData)
+   const fetchAllData = async ()=>{
+       await db.transaction((tx)=>{
+            tx.executeSql(
+              "SELECT * FROM rentalDatabase",
+              [],
+              (tx,result)=>{
+                let itemArray = []
+                const len = result.rows.length
+                if(len>0){
+                  for(let i = 0;i<len;++i){
+                    itemArray.push(result.rows.item(i))
+                    setRentalData({...rentalData,data:itemArray,empty:false})
+                  }
+                }else{
+                  setRentalData({...rentalData,empty:true})
                 }
-              }else{
-                setRentalData({...rentalData,empty:true})
-              }
-              resolve(result)
-              return result
-            },
-            error=>{reject(error)}
-          )
-        })
-      })
+                return result
+              },
+              error=>{console.log(error)}
+            )
+          })
   }
   const requestLibrary = async()=>{
     if (Platform.OS !== 'web') {
@@ -77,27 +74,27 @@ const Catalog = () => {
       requestLibrary();
     }
   },[isFocused,status])
-    const deletePicture = async(id)=>{
-        await dbSqlite.dbOpen().transaction((tx)=>{
-          tx.executeSql("DELETE FROM rental WHERE rental_id=?",
-          [id],
-          (tx,result)=>{
-            // const arryF= rentalData.data.filter(item=>item.rental_id !== 2)
-            // setRentalData({...rentalData,data:arryF})
-            setStatus('pending')
-            setAction('delete')
-            console.log('OK')
-          },
-          (error)=>{
-            console.log('loi r')
-            showMessage({
-              message: "Error Delete",
-              description: "The post can't remove",
-              type: "error",
-            })
-          }
-          )
-      })
+    const deletePicture = (id)=>{
+          db.transaction((tx)=>{
+            tx.executeSql("DELETE FROM rentalDatabase  WHERE id=?",
+            [id],
+            (tx,result)=>{
+              // const arryF= rentalData.data.filter(item=>item.rental_id !== 2)
+              // setRentalData({...rentalData,data:arryF})
+              setStatus('pending')
+              setAction('delete')
+              console.log('OK')
+            },
+            (error)=>{
+              console.log('loi r')
+              showMessage({
+                message: "Error Delete",
+                description: "The post can't remove",
+                type: "error",
+              })
+            }
+            )
+        })
      }
 
    const uploadPicture = async(id)=>{
@@ -109,20 +106,20 @@ const Catalog = () => {
     })
     console.log(result)
     const img = !result.cancelled?result.uri:null
-    await dbSqlite.dbOpen().transaction((tx)=>{
-      tx.executeSql("UPDATE rental SET image=? WHERE rental_id=?",
-      [img,id],
-      (tx,result)=>{
-        console.log('ok do')
-        setStatus('pending')
-        setAction('upload')
-        setShow(true)
-      },
-      (error)=>{
-        console.log("don't upload any image ")
-      }
-      )
-    })
+    await db.transaction((tx)=>{
+        tx.executeSql("UPDATE rentalDatabase  SET images=? WHERE id=?",
+        [img,id],
+        (tx,result)=>{
+          console.log('ok do')
+          setStatus('pending')
+          setAction('upload')
+          setShow(true)
+        },
+        (error)=>{
+          console.log("don't upload any image ")
+        }
+        )
+      })
   }
     return (
         <View style={styles.wrapper}>

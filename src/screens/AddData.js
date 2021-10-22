@@ -21,6 +21,10 @@ const AddData = () => {
             setContents(contentPopUp.success)
         }else if(status === 'loading' || status === 'confirm'){
             setContents({})
+        }else if(status === 'duplicateError'){
+            setContents(contentPopUp.error('duplicate'))
+        }else if(status === 'insertError'){
+            setContents(contentPopUp.error('errorInsertOrUpdate'))
         }
     }
     return (

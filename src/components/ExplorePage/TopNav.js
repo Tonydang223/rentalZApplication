@@ -44,12 +44,12 @@ const TopNav = (props) => {
         </>
     )
 }
-const styles = StyleSheet.create({
+const styles = {
     wrapper:(safeArea, isFloating, isTransparent)=>({
         justifyContent:'center',
         backgroundColor:isTransparent?null:'#fff',
         alignItems:'center',
-        paddingTop: safeArea.top -15,
+        paddingTop: 20,
         height:80 + safeArea.top,
         shadowOffset:{y:0},
         elevation: isTransparent ? 0.01 : 5,
@@ -82,5 +82,5 @@ const styles = StyleSheet.create({
         shadowRadius:20,
         elevation:15
     })
-})
+}
 export default TopNav

@@ -26,6 +26,8 @@ const EditFormScreen = () => {
             setContents(contentPopUp.success('edit'))
         }else if(status === 'loading'){
             setContents({})
+        }else if(status === 'errorUpdate'){
+            setContents(contentPopUp.error('errorInsertOrUpdate','update'))
         }
     }
     const {action,dataObj} = route.params

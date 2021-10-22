@@ -3,6 +3,7 @@ import {View,Text,Modal, StyleSheet,TouchableOpacity,Dimensions} from 'react-nat
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as Progress from 'react-native-progress'
 import * as Animatable from 'react-native-animatable'
+import { StatusBar } from 'react-native'
 const ModalDelete = ({show,status,setShow,deletePicture,id,setStatus}) => {
     const {height,width} = Dimensions.get('screen')
     const onClick = ()=>{
@@ -14,6 +15,10 @@ const ModalDelete = ({show,status,setShow,deletePicture,id,setStatus}) => {
     }
     return (
         <Modal transparent visible={show}>
+        <StatusBar
+            barStyle='dark-content'
+            backgroundColor={status==='success'?null:'rgba(0,0,0,0.2)'}
+        />
            {status === 'pending' ?(
             <View
             style={styles.modalProcess}
@@ -92,8 +97,8 @@ const styles = StyleSheet.create({
     modalWrapper:{
         flex:1,
         backgroundColor:'rgba(0,0,0,0.2)',
-        justifyContent:'center',
-        alignItems:'center'
+        alignItems:'center',
+        paddingTop:120
     },
     iconClose:{
         marginRight: -10,
@@ -127,7 +132,7 @@ const styles = StyleSheet.create({
         elevation:20,
         shadowColor:'#fff',
         shadowOffset:{width:2,height:1},
-        paddingVertical:35,
+        paddingVertical:30,
         shadowOpacity:0.4,
         shadowRadius:4
     },

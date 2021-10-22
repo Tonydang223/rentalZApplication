@@ -28,7 +28,7 @@ const Search = (props) => {
         </View>
     )
 }
-const styles = StyleSheet.create({
+const styles = {
     bannerWrapper:{
         marginTop:-1000,
         paddingTop:1000,
@@ -56,5 +56,5 @@ const styles = StyleSheet.create({
           }
       ]
     })
-})
+}
 export default Search

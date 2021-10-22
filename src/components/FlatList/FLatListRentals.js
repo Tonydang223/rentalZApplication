@@ -20,7 +20,7 @@ const FLatListRentals = (props) => {
         )
     }
     const onClickEditPage = (id)=>{
-        const findObj = rentalData.data.find((item)=>item.rental_id  === id)
+        const findObj = rentalData.data.find((item)=>item.id  === id)
         navigation.navigate('EditForm',{action:'edit',dataObj:findObj})
     }
     return (
@@ -40,17 +40,17 @@ const FLatListRentals = (props) => {
         status={status}
         setStatus={setStatus}
         />)}
-        {rentalData.empty?(empty()):(
+        {rentalData.empty || rentalData.data.length < 0?(empty()):(
             <FlatList
              data={rentalData.data}
-             keyExtractor={item=>item.rental_id.toString()}
+             keyExtractor={item=>item.id.toString()}
              contentContainerStyle={{
                padding:SPACING,
              }}
              renderItem={({item,index})=>(
                  // <View >
                  <TouchableOpacity
-                 onPress={()=>onOpenDetails(item.rental_id,'Details')}
+                 onPress={()=>onOpenDetails(item.id,'Details')}
                    style={{
                    flexDirection:'column',
                    marginBottom:SPACING,
@@ -64,18 +64,19 @@ const FLatListRentals = (props) => {
                    }}
                    >
                  <View style={styles.onAbove}>
-                 <Text style={styles.price}>${item.price}</Text>
+                 <Text style={styles.price}>${item.monthlyPrice}</Text>
                  <Image 
-                     source={{uri:item.image}}
+                     source={{uri:item.images}}
                      style={{
                        width:'100%',
                        height:150,
                        borderTopLeftRadius:15,
                        borderTopRightRadius:15,
+                       opacity:0.8
                        }}
                  />
                   <Icon name="image-outline" size={30} 
-                 onPress = {()=>uploadPicture(item.rental_id)}
+                 onPress = {()=>uploadPicture(item.id)}
                 style={styles.iconImage}
                   />
 
@@ -91,14 +92,14 @@ const FLatListRentals = (props) => {
                        size={26} 
                        color="rgb(0, 230, 64)" 
                        style={{marginTop:-3,marginLeft:60}}
-                       onPress={()=>onClickEditPage(item.rental_id)}
+                       onPress={()=>onClickEditPage(item.id)}
                        />
                        <Icon 
                        name="trash" 
                        size={25} 
                        color="#ff3333" 
                        style={{marginTop:-3}}
-                       onPress={()=>onClickTakenId(item.rental_id)}
+                       onPress={()=>onClickTakenId(item.id)}
                        />
                        </View>
                        <View  style={styles.nameWrapper}>
@@ -112,11 +113,11 @@ const FLatListRentals = (props) => {
                        </View>
                        <View style={[styles.cover,{left:4}]}>
                        <Text style={styles.texthead}>Property Type</Text>
-                        <Text style={styles.textContent}>{item.property}</Text>
+                        <Text style={styles.textContent}>{item.propertyType}</Text>
                         </View>
                         <View style={[styles.cover,{left:7}]}>
                         <Text style={styles.texthead}>Furniture Type</Text>
-                        <Text style={styles.textContent}>{item.furType?item.furType:'None'}</Text>
+                        <Text style={styles.textContent}>{item.furTypes?item.furTypes:'None'}</Text>
                         </View>
                         <View>
                         </View>
@@ -149,7 +150,10 @@ const styles = StyleSheet.create({
         color:'#fff',
         letterSpacing:3,
         padding:5,
-        fontWeight:'bold'
+        fontWeight:'bold',
+        textShadowColor: 'rgba(0,0,0,0.5)',
+        textShadowOffset: { width: 3, height: 3 },
+        textShadowRadius: 5,
     },
     nameWrapper:{
       paddingLeft:7,

@@ -5,28 +5,28 @@ const FlatListSearch = (props) => {
     const {dataSearch,openDetails} = props
     return (
         <View style={{flex:1}}>
-        {dataSearch.emptyData ?(<Text>No data to search</Text>):(
+        {dataSearch.emptyData ?(<Text style={styles.textNodata}>No data to search</Text>):(
             <FlatList
           data={dataSearch.data}
-          keyExtractor={item=>item.rental_id.toString()}
+          keyExtractor={item=>item.id.toString()}
           contentContainerStyle={{
               padding:25
           }}
           renderItem={({item})=>(
               <TouchableOpacity
               style={styles.wrapper}
-              onPress={()=>openDetails(item.rental_id)}
+              onPress={()=>openDetails(item.id)}
               >
                   <Image
-                  source={{uri:item.image}}
+                  source={{uri:item.images}}
                   style={styles.img}
                   />
                   <View style={{padding:13}}>
                   <View style={[styles.above,{flexDirection:'row'}]}>
-                  <Text style={styles.textPrice}>${item.price} </Text>
+                  <Text style={styles.textPrice}>${item.monthlyPrice} </Text>
                       <Text style={{fontSize:14,color:'#999894',marginTop:4.5}}>/per night</Text>
                   </View>
-                <Text style={{fontSize:22,fontWeight:'bold',textTransform:'capitalize'}}>{item.property}</Text>
+                <Text style={{fontSize:22,fontWeight:'bold',textTransform:'capitalize'}}>{item.propertyType}</Text>
                 <View style={[styles.middle,{flexDirection:'row'}]}>
                     <Text style={{fontSize:13.5,marginTop:0.5,color:'#999894',textTransform:'capitalize'}}>By {item.name}</Text>
                     <Icon 
@@ -53,7 +53,7 @@ const FlatListSearch = (props) => {
                 <Icon 
                 style={{marginTop:2}}
                 name="home" size={16} color="#000"/>
-                    <Text style={{marginLeft:3,marginTop:2,textTransform:'capitalize',fontSize:13}}>{item.furType?item.furType:'None'}</Text>
+                    <Text style={{marginLeft:3,marginTop:2,textTransform:'capitalize',fontSize:13}}>{item.furTypes?item.furTypes:'None'}</Text>
                 </View>
                 </View>
                   </View>
@@ -96,6 +96,12 @@ const styles = StyleSheet.create({
   },
   iconhome:{
       marginLeft:12,
+  },
+  textNodata:{
+      color:'#6b6b6b',
+      textAlign:'center',
+      marginTop:80,
+      fontSize:25
   }
 })
 

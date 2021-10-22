@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, TextInput, View,TouchableOpacity } from 'react-native'
 import RNPickerSelect from 'react-native-picker-select';
 import Icon from 'react-native-vector-icons/Ionicons'
-import dbSqlite from '../../../configs/dbOpen';
 import { FUR_OPTIONS } from '../../constants/furnishedOptions';
 import { ROOM_OPTIONS } from '../../constants/roomOptions';
 import ErrorMessage from '../ErrorMes/ErrorMessage';
 import TimePicker from '../TimePicker/TimePicker';
 import { pickerStyles, styles } from './styles';
+import { isValidate } from './isValidate';
+import dbSqlite, { db } from '../../../configs/dbOpen';
 
 const EditForm = ({dataObj,setEditVisible,setStatus}) => {
-    const {createdAt,price,updatedAt} = dataObj
-    const dataObjNew = {...dataObj,dateTime:createdAt,price:price.toString()}
+    const {createdAt,price,updatedAt,monthlyPrice,propertyType,furTypes} = dataObj
+    const dataObjNew = {...dataObj,dateTime:createdAt,price:monthlyPrice.toString(),property:propertyType,furType:furTypes}
 
     const [values,setValues] = useState(dataObjNew)
     console.log(values)
@@ -21,31 +22,34 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
     const boderColorSelectbedRoom = error.bedRoom?'#CF000F':'#000000'
      // update Data
     const updateData = async(value)=>{
-        const {property,bedRoom,dateTime,price,furType,note,name,updatedAt,rental_id}=value
+        const {property,bedRoom,dateTime,price,furType,note,name,updatedAt,id}=value
         const parsePrice = parseFloat(price)
-       await dbSqlite.dbOpen().transaction((tx)=>{
-           tx.executeSql(`UPDATE rental SET 
-           property=?, 
-           bedRoom=?,
-           createdAt=?,
-           price=?,
-           furType=?,
-           note=?,
-           name=?,
-           updatedAt=?
-           WHERE rental_id = ? `,
-           [property,bedRoom,dateTime,parsePrice,furType,note,name,updatedAt,rental_id],
-           (tx,result)=>{
-            setTimeout(()=>{
-                setStatus('success')
-            },3000)
-            console.log('update oke')
-           },
-           (error)=>{
-               console.log('loi update')
-           }
-           )
-       })
+       await db.transaction((tx)=>{
+            tx.executeSql(`UPDATE rentalDatabase SET 
+            propertyType=?, 
+            bedRoom=?,
+            createdAt=?,
+            monthlyPrice=?,
+            furTypes=?,
+            note=?,
+            name=?,
+            updatedAt=?
+            WHERE id = ? `,
+            [property,bedRoom,dateTime,parsePrice,furType,note,name,updatedAt,id],
+            (tx,result)=>{
+             setTimeout(()=>{
+                 setStatus('success')
+             },3000)
+             console.log('update oke')
+            },
+            (error)=>{
+                console.log('loi update')
+                setTimeout(()=>{
+                    setStatus('errorUpdate')
+                },3000)
+            }
+            )
+        })
     }
     //onChange
     const onChange = (name)=>(value)=>{
@@ -59,55 +63,10 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
 
     }
     
-    const isValidate=()=>{
-        //property
-        if(!values.property){
-            setError((pre)=>{
-                return {...pre,property:'This field must be required'}
-            })
-        }else if(values.property.length > 25){
-            setError((pre)=>{
-                return {...pre,property:'The property not too 25 characters'}
-            })
-        }
-        if(!values.bedRoom){
-            setError((pre)=>{
-                return {...pre,bedRoom:'This field must be required'}
-            })}
-     
-        if(!values.dateTime){
-            setError((pre)=>{
-                return {...pre,dateTime:'This field must be required'}
-            })
-        }
-       
-        if(!values.price){
-            setError((pre)=>{
-                return {...pre,price:'This field must be required'}
-            })
-        }else if(parseInt(values.price)<=0){
-            setError((pre)=>{
-                return {...pre,price:'Price must be bigger than 0'}
-            })
-        }
-        if(!values.name){
-            setError((pre)=>{
-                return {...pre,name:'This field must be required'}
-            })
-        }else if(values.name.length>20){
-            setError((pre)=>{
-                return {...pre,name:'The name is not too 20 characters'}
-            })
-        }
-        if(!values.dateTime){
-            setError((pre)=>{
-                return {...pre,dateTime:'This field must be required'}
-            })
-        }
-        return true
-    }
+   
     const submit = (value)=>{
-        if(isValidate()){
+        const parsePrice = parseFloat(value.price)>0
+        if(isValidate(values,setError)){
             console.log('have error')
             setStatus('error')
             setEditVisible(true)
@@ -117,9 +76,13 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
         && value.price!=='' 
         &&value.bedRoom!==null
         &&value.property!==''
+        &&value.property.match(/^[a-zA-Z\s]*$/)
         &&value.dateTime !== ''
         &&value.property.length<25
         &&value.name.length<20
+        &&value.name.match(/^[a-zA-Z\s]*$/)
+        &&value.price.match(/^-?[0-9][0-9,\.]+$/)
+        &&parsePrice
         ){
             setEditVisible(true)
             setStatus('loading')

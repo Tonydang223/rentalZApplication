@@ -3,8 +3,8 @@ import { StyleSheet, View, Keyboard, TouchableWithoutFeedback} from 'react-nativ
 import { TextInput } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {useNavigation,useIsFocused} from '@react-navigation/native'
-import dbSqlite from '../../../configs/dbOpen'
 import FlatListSearch from '../../components/FlatList/FlatListSearch'
+import { db } from '../../../configs/dbOpen'
 const SearchPage = () => {
     const refFocus = useRef()
     const [search,setSearch] = useState('')
@@ -24,7 +24,7 @@ const SearchPage = () => {
        }else{
            setShow(true)
            const newData = data.filter((item)=>{
-               const itemData = item.property ? item.property.toUpperCase():''.toUpperCase()
+               const itemData = item.propertyType ? item.propertyType.toUpperCase():''.toUpperCase()
                const textData = text.toUpperCase()
                return itemData.indexOf(textData) >-1
            })
@@ -34,7 +34,7 @@ const SearchPage = () => {
     }
 
     const openDetails =(id)=>{
-        const findData = data.find((item)=>item.rental_id === id) 
+        const findData = data.find((item)=>item.id === id) 
         navigation.navigate('Details',{
           idCard:id,
           objData:findData,
@@ -42,28 +42,28 @@ const SearchPage = () => {
         })
       }
     const getData = async()=>{
-        await dbSqlite.dbOpen().transaction((tx)=>{
-            tx.executeSql('SELECT * FROM rental',
-            [],
-            (tx,result)=>{
-                let ArrayItem = []
-                const len = result.rows.length
-                if(len>0){
-                    for(let i = 0;i<len;++i){
-                        ArrayItem.push(result.rows.item(i))
-                        setDataSearch({...dataSearch,data:ArrayItem,emptyData:false})
-                        setData(ArrayItem)
+        await db.transaction((tx)=>{
+                tx.executeSql('SELECT * FROM rentalDatabase',
+                [],
+                (tx,result)=>{
+                    let ArrayItem = []
+                    const len = result.rows.length
+                    if(len>0){
+                        for(let i = 0;i<len;++i){
+                            ArrayItem.push(result.rows.item(i))
+                            setDataSearch({...dataSearch,data:ArrayItem,emptyData:false})
+                            setData(ArrayItem)
+                        }
+                    }else{
+                        setDataSearch({...dataSearch,emptyData:true})
+                        setData([])
                     }
-                }else{
-                    setDataSearch({...dataSearch,emptyData:true})
-                    setData([])
+                },
+                (error)=>{
+                    console.log(error)
                 }
-            },
-            (error)=>{
-                console.log(error)
-            }
-            )
-        })
+                )
+            })
     }
     console.log(search)
     const onClick = ()=>{

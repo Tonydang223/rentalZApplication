@@ -7,7 +7,7 @@ const BottomContentDetail = (props) => {
     return (
         <View style={{flex:1,backgroundColor:'#fff',width:'100%'}}>
         <View style={styles.textProper}>
-        <Text style={styles.textHeadingProper}>{objData&&objData.property}</Text>
+        <Text style={styles.textHeadingProper}>{objData&&objData.propertyType}</Text>
          <Text style={styles.textSmallProper}>Property</Text>
         </View>
         <View style={styles.nameWrapper}>
@@ -36,14 +36,14 @@ const BottomContentDetail = (props) => {
                <Icon name="home-outline" size={30} color="rgb(0, 71, 171)" style={{marginTop:4.5}}/>
                <View style={{padding:5,marginLeft:13,}}>
                <Text style={styles.textHeadIcons}>Furniture Type</Text>
-               <Text style={[styles.textIcon,{textTransform:'capitalize'}]}>{objData&&objData.furType?objData.furType:'None'}</Text>
+               <Text style={[styles.textIcon,{textTransform:'capitalize'}]}>{objData&&objData.furTypes?objData.furTypes:'None'}</Text>
                </View>
            </View>
            <View style={{flexDirection:'row',marginBottom:7}}>
                <Icon name="cash-outline" size={30} color="rgb(0, 71, 171)" style={{marginTop:4.5}}/>
                <View style={{padding:5,marginLeft:13,}}>
                <Text style={styles.textHeadIcons}>Monthly Price</Text>
-               <Text style={[styles.textIcon,{textTransform:'capitalize'}]}>${objData&&objData.price}</Text>
+               <Text style={[styles.textIcon,{textTransform:'capitalize'}]}>${objData&&objData.monthlyPrice}</Text>
                </View>
            </View>
 

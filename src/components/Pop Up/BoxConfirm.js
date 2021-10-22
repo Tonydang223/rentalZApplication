@@ -40,7 +40,7 @@ const BoxConfirm = (props) => {
          </View>
          <View style={{display:'flex',flexDirection:'row',marginTop:5}}>
          <Text style={{fontWeight:'bold'}}>Note:</Text>
-         <Text style={{marginLeft:9}}>{values.note?values.note:'You do not enter any information about the note'}</Text>
+         <Text style={{marginLeft:5}}>{values.note?values.note:'You do not enter any information about the note'}</Text>
          </View>
          <View style={{display:'flex',flexDirection:'row',marginTop:5}}>
          <Text style={{fontWeight:'bold'}}>Name:</Text>

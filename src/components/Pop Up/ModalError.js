@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {View,Text,Modal, StyleSheet,TouchableOpacity} from 'react-native'
+import {View,Text,Modal, StyleSheet,TouchableOpacity, StatusBar} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as Progress from 'react-native-progress'
 import * as Animatable from 'react-native-animatable'
@@ -14,6 +14,10 @@ const ModalError = (props) => {
 
     return (
         <Modal transparent visible={show}>
+            <StatusBar
+                backgroundColor={status === 'loading'?null:'rgba(0,0,0,0.2)'}
+                barStyle={status === 'loading'?'dark-content':'light-content'}
+            />
             {status === 'loading'?
             (
             <View style={styles.wrapperProgress}>

@@ -4,8 +4,8 @@ import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator,TransitionPresets} from '@react-navigation/stack'
 import GetStarted from './src/screens/StartScreen';
-import dbSqlite from './configs/dbOpen';
 import BottomTabMainPage from './src/navigation/BottomTabMainPage';
+import { db } from './configs/dbOpen';
 
 export default function App() {
 
@@ -15,24 +15,41 @@ export default function App() {
   useEffect(()=>{
     createTableData();
   },[])
-  const createTableData = async()=>{
-    await dbSqlite.dbOpen().transaction((tx)=>{
-      tx.executeSql(`CREATE TABLE IF NOT EXISTS rental 
-      (rental_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        property TEXT,
-        bedRoom VARCHAR(100) NOT NULL, 
-        createdAt TIMESTAMP NOT NULL, 
-        price NUMERIC NOT NULL, 
-        furType VARCHAR(100), 
-        note TEXT, 
-        name TEXT,
-        updatedAt TIMESTAMP NOT NULL, 
-        image BLOB NOT NULL)`,
-        (tx,result)=>{},
-        (error)=>{console.log("Error",error)}
-        )
-        console.log("Connect successfully!!!")
-    })
+
+  const createTableData = async ()=>{
+       await db.transaction((tx)=>{
+          tx.executeSql(`CREATE TABLE IF NOT EXISTS rentalDatabase(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            propertyType TEXT,
+            bedRoom TEXT,
+            createdAt TEXT,
+            monthlyPrice NUMERIC,
+            furTypes TEXT,
+            note TEXT,
+            name TEXT,
+            updatedAt TEXT,
+            images BLOB NOT NULL
+          );`,
+            [],
+            (txn,result)=>console.log(result),
+            (error)=>console.log('loi toa')
+            );
+            tx.executeSql(`
+            CREATE UNIQUE INDEX rental_idx ON rentalDatabase 
+            (propertyType,
+              bedRoom,
+              monthlyPrice,
+              furTypes,
+              name
+              )
+            `,
+            [],
+            (tx,result)=>console.log(result),
+            (error)=>{console.log('error create index',error)}
+            )
+            console.log('VO')
+        }) 
+        
   }
 
 

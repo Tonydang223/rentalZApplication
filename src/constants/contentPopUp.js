@@ -1,10 +1,15 @@
 const contentPopUp ={
-        error:{
+        error:(errorData,letterUpdateError)=>({
             name:'alert-circle',
             headingText:'Warning !!!',
-            content:`Can you check it again please, you missed any the required field.`,
+            content:errorData==='duplicate'?
+            `The record is existed in the database. You need check and change some information`:
+            errorData ==='errorInsertOrUpdate'?
+            `You can not ${letterUpdateError?letterUpdateError:'insert'} data. Check it again!!!`
+            :
+            `Can you check it again please, you missed any the required field.`,
             color:'#CF000F'
-         },
+         }),
          success:(editContent)=>({
              name:'checkmark-circle',
              headingText:'Succesfull',

@@ -6,9 +6,10 @@ import TimePicker from '../TimePicker/TimePicker';
 import { ROOM_OPTIONS } from '../../constants/roomOptions';
 import { FUR_OPTIONS } from '../../constants/furnishedOptions';
 import ErrorMessage from '../ErrorMes/ErrorMessage';
-import dbSqlite from '../../../configs/dbOpen';
 import { pickerStyles, styles } from './styles';
 import ModalError from '../Pop Up/ModalError';
+import { isValidate } from './isValidate';
+import { db, dbSqlite } from '../../../configs/dbOpen';
 const TextForm = (props) => {
     const {setStatus,setShow,status,navigation,show,contents} = props
     const initialValues = {
@@ -23,92 +24,58 @@ const TextForm = (props) => {
         updatedAt:''
     }
     const [values,setValues] = useState(initialValues)
+    console.log(values)
     const [error,setError]  = useState({})
     const [dateAdd,setDateAdd] = useState(new Date())
     const boderColorSelectbedRoom = error.bedRoom?'#CF000F':'#000000'
      // insert Data
-     const InsertData = async(value) =>{
+     const InsertData = async (value) =>{
          const {property,bedRoom,dateTime,price,furType,note,name,img,updatedAt} = value
          const parsePrice = parseFloat(price)
-         await dbSqlite.dbOpen().transaction((tx)=>{
-             tx.executeSql(`
-             INSERT INTO rental
-             (property,bedRoom,createdAt,price,furType,note,name,updatedAt,image)
-             VALUES (?,?,?,?,?,?,?,?,?)
-             `,
-             [property,bedRoom,dateTime,parsePrice,furType,note,name,updatedAt,img],
-             (tx,result)=>{
-                 setTimeout(()=>{
-                    setStatus('success')
-                },2000)
-                console.log('inSERT OK')
-             },
-             (error)=>{console.log(error)}
+         await db.transaction((txn)=>{
+             txn.executeSql(
+                `INSERT OR IGNORE INTO rentalDatabase
+                (propertyType,bedRoom,createdAt,monthlyPrice,furTypes,note,name,updatedAt,images)
+                VALUES (?,?,?,?,?,?,?,?,?)
+                `,
+                [property,bedRoom,dateTime,parsePrice,furType,note,name,updatedAt,img],
+                (tx,result)=>{
+                    console.log(result.rowsAffected)
+                    if(result.rowsAffected<1){
+                        setTimeout(()=>{
+                            setStatus('duplicateError')
+                        },3000)
+                        console.log('duplicate error')
+                    }else{
+                        setTimeout(()=>{
+                            setStatus('success')
+                        },3000)
+                        console.log('insert ok')
+                    }
+                },
+                (error)=>{
+                    console.log('Error')
+                    setTimeout(()=>{
+                        setStatus('insertError')
+                    },2000)
+                }
              )
-
          })
      }
     //onChange
     const onChange = (name)=>(value)=>{
          setValues({...values,[name]:value})
-
          if(value !== "" || value !== null){
              setError((pre)=>{
                  return{...pre,[name]:null}
              })
          }
-
     }
     
-    const isValidate=()=>{
-        //property
-        if(!values.property){
-            setError((pre)=>{
-                return {...pre,property:'This field must be required'}
-            })
-        }else if(values.property.length > 25){
-            setError((pre)=>{
-                return {...pre,property:'The property not too 25 characters'}
-            })
-        }
-        if(!values.bedRoom){
-            setError((pre)=>{
-                return {...pre,bedRoom:'This field must be required'}
-            })}
-     
-        if(!values.dateTime){
-            setError((pre)=>{
-                return {...pre,dateTime:'This field must be required'}
-            })
-        }
-       
-        if(!values.price){
-            setError((pre)=>{
-                return {...pre,price:'This field must be required'}
-            })
-        }else if(parseInt(values.price)<=0){
-            setError((pre)=>{
-                return {...pre,price:'Price must be bigger than 0'}
-            })
-        }
-        if(!values.name){
-            setError((pre)=>{
-                return {...pre,name:'This field must be required'}
-            })
-        }else if(values.name.length>20){
-            setError((pre)=>{
-                return {...pre,name:'The name is not too 20 characters'}
-            })
-        }
-        if(!values.dateTime){
-            setError((pre)=>{
-                return {...pre,dateTime:'This field must be required'}
-            })
-        }
-        return true
-    }
+ 
     const submit = (value)=>{
-        if(isValidate()){
+        const parsePrice = parseFloat(value.price)>0
+        if(isValidate(values,setError)){
             console.log('have error')
             setStatus('error')
             setShow(true) 
@@ -116,15 +83,20 @@ const TextForm = (props) => {
             
         
         if(value.name !== ''
-        && value.price!=='' 
+        && value.price!==''
         &&value.bedRoom!==null
         &&value.property!==''
+        &&value.property.match(/^[a-zA-Z\s]*$/)
         &&value.dateTime !== ''
         &&value.property.length<25
         &&value.name.length<20
+        &&value.name.match(/^[a-zA-Z\s]*$/)
+        &&value.price.match(/^-?[0-9][0-9,\.]+$/)
+        &&parsePrice
         ){
             setShow(true)
             setStatus('confirm')
+            console.log('ok')
         }
     }
     const placeholder=(name)=> {
