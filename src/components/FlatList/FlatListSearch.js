@@ -27,17 +27,19 @@ const FlatListSearch = (props) => {
                       <Text style={{fontSize:14,color:'#999894',marginTop:4.5}}>/per night</Text>
                   </View>
                 <Text style={{fontSize:22,fontWeight:'bold',textTransform:'capitalize'}}>{item.propertyType}</Text>
-                <View style={[styles.middle,{flexDirection:'row'}]}>
+                <View style={[styles.middle,{flexDirection:'column'}]}>
                     <Text style={{fontSize:13.5,marginTop:0.5,color:'#999894',textTransform:'capitalize'}}>By {item.name}</Text>
+                    <View style={{flexDirection:'row'}}>
                     <Icon 
                     name='calendar-outline' 
                     size={16} 
                     color='#999894'
-                    style={{marginLeft:8,marginTop:2}}
+                    style={{marginTop:2}}
                     ></Icon>
                     <Text 
-                    style={{fontSize:13.5,marginLeft:3,marginTop:1,color:'#999894'}}>
+                    style={{fontSize:13.5,marginLeft:5,marginTop:1,color:'#999894'}}>
                     {item.createdAt.slice(0,item.createdAt.length-10)}</Text>
+                    </View>
                 </View>
                 <View style={[styles.bottom,{flexDirection:'row'}]}>
                 <View style={[styles.iconbed,{flexDirection:'row'}]}>
@@ -79,8 +81,8 @@ const styles = StyleSheet.create({
    shadowRadius:20
   },
   img:{
-      width:110,
-      height:110,
+      width:120,
+      height:120,
       borderRadius:20,
       margin:12,
       zIndex:15

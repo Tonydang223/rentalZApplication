@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     textArea:{
         width:'100%',
         width:280,
-        height:80,
+        height:130,
         top:0,
         paddingHorizontal:10,
         paddingTop:5,

@@ -64,6 +64,9 @@ const FLatListRentals = (props) => {
                    }}
                    >
                  <View style={styles.onAbove}>
+                 <View style={styles.idWrap}>
+                     <Text style={{color:"#fff",fontSize:14,fontWeight:'bold'}}>ID: {item.id}</Text>
+                 </View>
                  <Text style={styles.price}>${item.monthlyPrice}</Text>
                  <Image 
                      source={{uri:item.images}}
@@ -141,6 +144,22 @@ const styles = StyleSheet.create({
     time:{
         flexDirection:'row',
         justifyContent:'space-between'
+    },
+    idWrap:{
+        height:30,
+        borderRadius:10,
+        backgroundColor:'#22a7f0',
+        position:'absolute',
+        top:0,
+        display:'flex',
+        alignItems:'center',
+        justifyContent:'center',
+        elevation:20,
+        margin:12,
+        padding:6,
+        shadowColor: 'rgba(0,0,0,0.6)',
+        shadowOffset: { width: 4, height: 4 },
+        shadowRadius: 10,
     },
     price:{
         position:'absolute',

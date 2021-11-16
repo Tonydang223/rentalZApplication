@@ -24,7 +24,8 @@ const TextForm = (props) => {
         updatedAt:''
     }
     const [values,setValues] = useState(initialValues)
-    console.log(values)
+    const regexLetter = /^[a-zA-Z\s]*$/
+    const regexNumber = /^-?[0-9][0-9,\.]+$/
     const [error,setError]  = useState({})
     const [dateAdd,setDateAdd] = useState(new Date())
     const boderColorSelectbedRoom = error.bedRoom?'#CF000F':'#000000'
@@ -33,8 +34,8 @@ const TextForm = (props) => {
          const {property,bedRoom,dateTime,price,furType,note,name,img,updatedAt} = value
          const parsePrice = parseFloat(price)
          await db.transaction((txn)=>{
-             txn.executeSql(
-                `INSERT OR IGNORE INTO rentalDatabase
+            txn.executeSql(
+                `INSERT OR IGNORE INTO rentalData
                 (propertyType,bedRoom,createdAt,monthlyPrice,furTypes,note,name,updatedAt,images)
                 VALUES (?,?,?,?,?,?,?,?,?)
                 `,
@@ -75,7 +76,7 @@ const TextForm = (props) => {
  
     const submit = (value)=>{
         const parsePrice = parseFloat(value.price)>0
-        if(isValidate(values,setError)){
+        if(isValidate(values,setError,regexLetter,regexNumber)){
             console.log('have error')
             setStatus('error')
             setShow(true) 
@@ -86,12 +87,12 @@ const TextForm = (props) => {
         && value.price!==''
         &&value.bedRoom!==null
         &&value.property!==''
-        &&value.property.match(/^[a-zA-Z\s]*$/)
+        &&value.property.match(regexLetter)
         &&value.dateTime !== ''
         &&value.property.length<25
         &&value.name.length<20
-        &&value.name.match(/^[a-zA-Z\s]*$/)
-        &&value.price.match(/^-?[0-9][0-9,\.]+$/)
+        &&value.name.match(regexLetter)
+        &&value.price.match(regexNumber)
         &&parsePrice
         ){
             setShow(true)
@@ -131,7 +132,7 @@ const TextForm = (props) => {
         {!error.property?null:(
             <ErrorMessage error={error.property}/>
         )}
-        <Text style={styles.label}>Bed Rooms</Text>
+        <Text style={styles.label}>Bedrooms</Text>
         <RNPickerSelect
             useNativeAndroidPickerStyle={false}
             style={pickerStyles(boderColorSelectbedRoom)}

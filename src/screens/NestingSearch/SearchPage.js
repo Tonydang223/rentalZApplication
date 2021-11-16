@@ -16,6 +16,7 @@ const SearchPage = () => {
     const isFocused = useIsFocused();
     const navigation = useNavigation()
     const [show,setShow] = useState(false)
+    // searchFilter
     const searchFilter = (text)=>{
        if(!text){
           setShow(false)
@@ -24,15 +25,23 @@ const SearchPage = () => {
        }else{
            setShow(true)
            const newData = data.filter((item)=>{
-               const itemData = item.propertyType ? item.propertyType.toUpperCase():''.toUpperCase()
+               const itemData = item.propertyType ? item.propertyType.toUpperCase():''.toUpperCase() 
+               const furItemData= item.furTypes?item.furTypes.toUpperCase():''.toUpperCase()
+               const reporterData= item.name?item.name.toUpperCase():''.toUpperCase()
+               const bedRoomData =  item.bedRoom?item.bedRoom.toUpperCase():''.toUpperCase()
                const textData = text.toUpperCase()
-               return itemData.indexOf(textData) >-1
+               return (
+                itemData.indexOf(textData) >-1
+                || furItemData.indexOf(textData)>-1
+                || reporterData.indexOf(textData)>-1
+                || bedRoomData.indexOf(textData)>-1
+               ) 
            })
            setDataSearch({...dataSearch,data:newData})
            setSearch(text)
        } 
     }
-
+    // detail function
     const openDetails =(id)=>{
         const findData = data.find((item)=>item.id === id) 
         navigation.navigate('Details',{
@@ -41,9 +50,10 @@ const SearchPage = () => {
           message:'taken id successfully!!!'
         })
       }
+    // get all data
     const getData = async()=>{
         await db.transaction((tx)=>{
-                tx.executeSql('SELECT * FROM rentalDatabase',
+                tx.executeSql('SELECT * FROM rentalData',
                 [],
                 (tx,result)=>{
                     let ArrayItem = []
@@ -66,25 +76,30 @@ const SearchPage = () => {
             })
     }
     console.log(search)
+
+    // back mainSearchPage from detail Screen
     const onClick = ()=>{
         Keyboard.dismiss()
         setTimeout(()=>{
             navigation.goBack()
         },100)
     }
+    
+    // turn off icon cross on search input field
     const onClickClose = ()=>{
         setSearch('')
         setShow(false)
         setDataSearch({...dataSearch,data:data})
     }
     useEffect(()=>{
+          getData()
           if(isFocused){
             setTimeout(()=>{
                 refFocus.current.focus()
             },100)
-            getData()
+            
           }
-        return ()=>!isFocused
+          return()=>!isFocused
     },[isFocused])
 
     return (

@@ -28,25 +28,26 @@ const Catalog = () => {
 console.log(rentalData)
    const fetchAllData = async ()=>{
        await db.transaction((tx)=>{
-            tx.executeSql(
-              "SELECT * FROM rentalDatabase",
-              [],
-              (tx,result)=>{
-                let itemArray = []
-                const len = result.rows.length
-                if(len>0){
-                  for(let i = 0;i<len;++i){
-                    itemArray.push(result.rows.item(i))
-                    setRentalData({...rentalData,data:itemArray,empty:false})
-                  }
-                }else{
-                  setRentalData({...rentalData,empty:true})
-                }
-                return result
-              },
-              error=>{console.log(error)}
-            )
-          })
+        tx.executeSql(
+          "SELECT * FROM rentalData",
+          [],
+          (tx,result)=>{
+            let itemArray = []
+            const len = result.rows.length
+            console.log(result.rows)
+            if(len>0){
+              for(let i = 0;i<len;++i){
+                itemArray.push(result.rows.item(i))
+                setRentalData({...rentalData,data:itemArray,empty:false})
+              }
+            }else{
+              setRentalData({...rentalData,empty:true})
+            }
+            return result
+          },
+          error=>{console.log(error)}
+        )
+       })
   }
   const requestLibrary = async()=>{
     if (Platform.OS !== 'web') {
@@ -62,11 +63,6 @@ console.log(rentalData)
       setTimeout(()=>{
          setStatus('success')
       },3000)
-    }else if(status === 'success'){
-      setTimeout(()=>{
-        setStatus('')
-        setShow(false)
-      },4000)
     }
     requestLibrary()
     return ()=>{
@@ -76,7 +72,7 @@ console.log(rentalData)
   },[isFocused,status])
     const deletePicture = (id)=>{
           db.transaction((tx)=>{
-            tx.executeSql("DELETE FROM rentalDatabase  WHERE id=?",
+            tx.executeSql("DELETE FROM rentalData  WHERE id=?",
             [id],
             (tx,result)=>{
               // const arryF= rentalData.data.filter(item=>item.rental_id !== 2)
@@ -107,7 +103,7 @@ console.log(rentalData)
     console.log(result)
     const img = !result.cancelled?result.uri:null
     await db.transaction((tx)=>{
-        tx.executeSql("UPDATE rentalDatabase  SET images=? WHERE id=?",
+        tx.executeSql("UPDATE rentalData  SET images=? WHERE id=?",
         [img,id],
         (tx,result)=>{
           console.log('ok do')

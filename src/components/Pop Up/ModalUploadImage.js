@@ -7,11 +7,13 @@ const ModalUpload = ({show,status,setShow,deletePicture,id,setStatus,content}) =
     
 
     const onClickConfirm = ()=>{
-        setShow(false)
-        setStatus('')
+        setTimeout(()=>{
+            setShow(false)
+            setStatus('')
+        },500)
     }
     return (
-        <Modal transparent visible={show}>
+        <Modal transparent visible={show} animationType="fade">
            {status === 'pending' ?(
             <View
             style={styles.modalProcess}
@@ -34,9 +36,17 @@ const ModalUpload = ({show,status,setShow,deletePicture,id,setStatus,content}) =
                 duration={2000}
                 easing='ease-in'
                 >
-                <Icon onPress={onClickConfirm} style={styles.iconSuccess} name="checkmark-circle" size={25} color="rgb(0, 230, 64)"/>
-                <Text style={styles.content}>Uploaded the image successfully!!!</Text>               
-                <Icon onPress={onClickConfirm} style={styles.iconClose} name="close-outline" size={30} color="#000000"/>
+                <View style={{alignItems:'flex-end',justifyContent:'center',width:'100%'}}>
+                <Icon onPress={onClickConfirm} style={styles.iconClose} name="close-outline" size={40} color="#000000"/>
+                </View>
+                <Icon onPress={onClickConfirm} style={styles.iconSuccess} name="checkmark-circle" size={70} color="rgb(0, 230, 64)"/>
+                <Text style={styles.content}>Uploaded the image successfully!!!</Text>  
+                <TouchableOpacity
+                style={styles.btnUpload}
+                onPress={onClickConfirm}
+                >
+                    <Text style={{fontSize:14,color:'#fff'}}>CONTINUE</Text>
+                </TouchableOpacity>              
                </Animatable.View>
             ):null}
             </View>)}
@@ -46,8 +56,9 @@ const ModalUpload = ({show,status,setShow,deletePicture,id,setStatus,content}) =
 const styles = StyleSheet.create({
     modalWrapper:{
         flex:1,
-        justifyContent:'flex-end',
-        alignItems:'center'
+        justifyContent:'center',
+        alignItems:'center',
+        backgroundColor:'rgba(0,0,0,0.2)'
     },
     modalProcess:{
         flex:1,
@@ -55,7 +66,7 @@ const styles = StyleSheet.create({
         alignItems:'center'
     },
     content:{
-        fontSize:12,
+        fontSize:14,
         color:'#746D69',
         letterSpacing:1,
         padding:10,
@@ -71,11 +82,9 @@ const styles = StyleSheet.create({
         shadowOffset:{width:2,height:10},
         shadowOpacity:0.5,
         shadowRadius:4,
-        height:50,
-        marginBottom: 150,
+        marginBottom: 50,
         display:'flex',
-        flexDirection:'row',
-        justifyContent:'space-around',
+        flexDirection:'column',
         alignItems:'center'
     },
     header:{
@@ -87,7 +96,23 @@ const styles = StyleSheet.create({
         marginLeft:6
     },
     iconSuccess:{
-        marginRight:3
+        alignItems:'center'
+    },
+    btnUpload:{
+        width:120,
+        height:48,
+        backgroundColor:'rgb(0,230,64)',
+        borderRadius:20,
+        display:'flex',
+        justifyContent:'center',
+        alignItems:'center',
+        marginTop:30,
+        marginBottom:15,
+        shadowColor:'rgba(0,0,0,0.4)',
+        elevation:15,
+        shadowOffset:{width:5,height:5},
+        shadowOpacity:.5,
+        shadowRadius:14
     }
 })
 

@@ -15,23 +15,23 @@ const EditFormScreen = () => {
     }
     const [contents,setContents] = useState({})
     const [editVisible,setEditVisible] = useState(false)
-    const [status,setStatus] = useState('')
+    const [statusEdit,setStatusEdit] = useState('')
+    console.log(statusEdit)
     useEffect(()=>{
         handleContentPopUp();
-    },[status])
+    },[statusEdit])
     const handleContentPopUp = ()=>{
-        if(status === 'error'){
+        if(statusEdit === 'error'){
             setContents(contentPopUp.error)
-        }else if(status === 'success'){
+        }else if(statusEdit === 'success'){
             setContents(contentPopUp.success('edit'))
-        }else if(status === 'loading'){
+        }else if(statusEdit === 'loading'){
             setContents({})
-        }else if(status === 'errorUpdate'){
+        }else if(statusEdit === 'errorUpdate'){
             setContents(contentPopUp.error('errorInsertOrUpdate','update'))
         }
     }
     const {action,dataObj} = route.params
-    const {bedRoom,createdAt,furType,image,name,price,property,rental_id} = dataObj
     console.log(dataObj)
     return (
         <KeyboardAvoidingView style={{flex:1}}>
@@ -39,7 +39,8 @@ const EditFormScreen = () => {
            contents={contents}
            show={editVisible}
            setShow={setEditVisible}
-           status={status}
+           status={statusEdit}
+           setStatus={setStatusEdit}
            navigation={navigation}
            />
            <View style={styles.header}>
@@ -56,7 +57,7 @@ const EditFormScreen = () => {
            <View style={styles.wrapper}>
            <EditForm 
            dataObj={dataObj}
-           setStatus={setStatus}
+           setStatusEdit={setStatusEdit}
            setEditVisible={setEditVisible}
            />
            </View>

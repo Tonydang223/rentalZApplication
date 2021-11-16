@@ -5,7 +5,8 @@ import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator,TransitionPresets} from '@react-navigation/stack'
 import GetStarted from './src/screens/StartScreen';
 import BottomTabMainPage from './src/navigation/BottomTabMainPage';
-import { db } from './configs/dbOpen';
+import * as FileSystem from 'expo-file-system'
+import { db, dbSqlite } from './configs/dbOpen';
 
 export default function App() {
 
@@ -13,42 +14,43 @@ export default function App() {
   const Stack = createStackNavigator();
   //createTableData
   useEffect(()=>{
+    // dbSqlite();
     createTableData();
   },[])
-
-  const createTableData = async ()=>{
-       await db.transaction((tx)=>{
-          tx.executeSql(`CREATE TABLE IF NOT EXISTS rentalDatabase(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            propertyType TEXT,
-            bedRoom TEXT,
-            createdAt TEXT,
-            monthlyPrice NUMERIC,
-            furTypes TEXT,
-            note TEXT,
-            name TEXT,
-            updatedAt TEXT,
-            images BLOB NOT NULL
-          );`,
-            [],
-            (txn,result)=>console.log(result),
-            (error)=>console.log('loi toa')
-            );
-            tx.executeSql(`
-            CREATE UNIQUE INDEX rental_idx ON rentalDatabase 
-            (propertyType,
-              bedRoom,
-              monthlyPrice,
-              furTypes,
-              name
-              )
-            `,
-            [],
-            (tx,result)=>console.log(result),
-            (error)=>{console.log('error create index',error)}
-            )
-            console.log('VO')
-        }) 
+  
+  const createTableData = async()=>{
+    await db.transaction((tx)=>{
+      tx.executeSql(`CREATE TABLE IF NOT EXISTS rentalData(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        propertyType TEXT,
+        bedRoom TEXT,
+        createdAt TEXT,
+        monthlyPrice NUMERIC,
+        furTypes TEXT,
+        note TEXT,
+        name TEXT,
+        updatedAt TEXT,
+        images BLOB NOT NULL
+      );`,
+        [],
+        (txn,result)=>console.log("create a table ok",result),
+        (error)=>console.log('loi toa',error)
+        );
+        tx.executeSql(`
+        CREATE UNIQUE INDEX rental_idx ON rentalData 
+        (propertyType,
+          bedRoom,
+          monthlyPrice,
+          furTypes,
+          name
+        )
+        `,
+        [],
+        (tx,result)=>console.log("create index ok",result),
+        (error)=>{console.log('error create index',error)}
+        )
+        console.log('VO')
+    }) 
         
   }
 

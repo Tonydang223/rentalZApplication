@@ -10,6 +10,9 @@ const BoxConfirm = (props) => {
             setValues(initialValues)
             setDateAdd(new Date())
     }
+    const colorHintNoText = (value)=>{
+        return value?'#000':'#6b6b6b'
+    }
     return (
          <View style={styles.boxDetailsConfirm}>
          <View style={styles.above}>
@@ -36,11 +39,11 @@ const BoxConfirm = (props) => {
          </View>
          <View style={{display:'flex',flexDirection:'row',marginTop:5}}>
          <Text style={{fontWeight:'bold'}}>Furniture Type:</Text>
-         <Text style={{marginLeft:9}}>{values.furType?values.furType:'You do not select any field of the furniture type'}</Text>
+         <Text style={{marginLeft:9,color:colorHintNoText(values.furType)}}>{values.furType?values.furType:'You do not select any field of the furniture type'}</Text>
          </View>
          <View style={{display:'flex',flexDirection:'row',marginTop:5}}>
          <Text style={{fontWeight:'bold'}}>Note:</Text>
-         <Text style={{marginLeft:5}}>{values.note?values.note:'You do not enter any information about the note'}</Text>
+         <Text style={{marginLeft:5,color:colorHintNoText(values.note)}}>{values.note?values.note:'You do not enter any information about the note'}</Text>
          </View>
          <View style={{display:'flex',flexDirection:'row',marginTop:5}}>
          <Text style={{fontWeight:'bold'}}>Name:</Text>
@@ -60,7 +63,7 @@ const BoxConfirm = (props) => {
              style={[styles.btn,{backgroundColor:'#000'}]}
              onPress={()=>setShow(false)}
              >
-                 <Text style={styles.textBtn}>Go Back</Text>
+                 <Text style={styles.textBtn}>Back</Text>
              </TouchableOpacity>
          </View>
          </View>
@@ -111,10 +114,11 @@ const styles = StyleSheet.create({
         width:115,
         height:45,
         borderRadius:15,
-        shadowColor:'#000',
-        shadowOffset:{width:2,height:8},
+        shadowColor:'rgba(0,0,0,0.2)',
+        shadowOffset:{width:5,height:8},
         shadowOpacity:.4,
-        shadowRadius:15
+        shadowRadius:15,
+        elevation:10
     },
     textBtn:{color:'#fff',
     fontSize:18,

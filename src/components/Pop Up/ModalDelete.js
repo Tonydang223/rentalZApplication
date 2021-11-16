@@ -6,18 +6,17 @@ import * as Animatable from 'react-native-animatable'
 import { StatusBar } from 'react-native'
 const ModalDelete = ({show,status,setShow,deletePicture,id,setStatus}) => {
     const {height,width} = Dimensions.get('screen')
-    const onClick = ()=>{
-        setShow(false)
-    }
     const onClickConfirm = ()=>{
-        setShow(false)
-        setStatus('')
+        setTimeout(()=>{
+            setShow(false)
+            setStatus('')
+        },500)
     }
     return (
-        <Modal transparent visible={show}>
+        <Modal transparent visible={show} animationType="fade">
         <StatusBar
             barStyle='dark-content'
-            backgroundColor={status==='success'?null:'rgba(0,0,0,0.2)'}
+            backgroundColor={'rgba(0,0,0,0.2)'}
         />
            {status === 'pending' ?(
             <View
@@ -33,31 +32,36 @@ const ModalDelete = ({show,status,setShow,deletePicture,id,setStatus}) => {
             </View>
 
            ):(
-            <View style={{height:height,width:width}}>
+            <View style={styles.modalWrapper}>
             {status === 'success' ?(
-                <View style={{flex:1, justifyContent:'flex-end', alignItems:'center'}}>
                 <Animatable.View 
                 style={styles.boxSuccess}
-                animation="fadeInUpBig"
+                animation={show?"fadeInUp":"fadeOutUp"}
                 duration={2000}
                 easing='ease-in'
                 >
-                <Icon onPress={onClickConfirm} style={{marginRight:3}} name="checkmark-circle" size={25} color="rgb(0, 230, 64)"/>
-                <Text style={styles.contentSuccess}>Deleted the post successfully!!!</Text>               
-                <Icon onPress={onClickConfirm} style={styles.iconCloseAbove} name="close-outline" size={30} color="#000000"/>
+                <View style={styles.header}>
+                <Icon onPress={onClickConfirm} style={styles.iconCloseAbove} name="close-outline" size={37} color="#000000"/>
+                </View>
+                <Icon onPress={onClickConfirm} style={{alignItems:'center'}} name="checkmark-circle" size={70} color="rgb(0, 230, 64)"/>
+                <Text style={styles.contentSuccess}>Deleted the post successfully!!!</Text>
+                <TouchableOpacity
+                style={styles.btnContinue}
+                onPress={onClickConfirm}
+                >
+                    <Text style={{fontSize:14,color:'#fff'}}>CONTINUE</Text>
+                </TouchableOpacity>               
                </Animatable.View>
-               </View>
             ):(
-                <View style={styles.modalWrapper}>
                 <Animatable.View 
                 style={styles.box}
-                animation="bounceIn"
+                animation={!show?'bounceOut':'bounceIn'}
                 duration={2000}
                 easing='ease-in'
                 >
                <View style={{alignItems:'center'}}>
                 <View style={styles.header}>
-                    <Icon onPress={onClick} style={styles.iconClose} name="close-outline" size={42} color="#000000"/>
+                    <Icon onPress={onClickConfirm} style={styles.iconClose} name="close-outline" size={42} color="#000000"/>
                 </View>
                 
                </View>
@@ -82,11 +86,10 @@ const ModalDelete = ({show,status,setShow,deletePicture,id,setStatus}) => {
                 <TouchableOpacity
                 style={[styles.btn,{backgroundColor:'#000000'}]}
                 >
-                <Text style={[styles.textBtn]} onPress={onClick}>CANCEL</Text>
+                <Text style={[styles.textBtn]} onPress={onClickConfirm}>CANCEL</Text>
                 </TouchableOpacity>
                </View>
                </Animatable.View>
-               </View>
             )}
             </View>
            )}
@@ -98,7 +101,7 @@ const styles = StyleSheet.create({
         flex:1,
         backgroundColor:'rgba(0,0,0,0.2)',
         alignItems:'center',
-        paddingTop:120
+        justifyContent:'center'
     },
     iconClose:{
         marginRight: -10,
@@ -166,7 +169,7 @@ const styles = StyleSheet.create({
         alignItems:'center'
     },
     contentSuccess:{
-        fontSize:12,
+        fontSize:14,
         color:'#746D69',
         letterSpacing:1,
         padding:10,
@@ -182,15 +185,31 @@ const styles = StyleSheet.create({
         shadowOffset:{width:2,height:10},
         shadowOpacity:0.5,
         shadowRadius:4,
-        height:50,
-        marginBottom: 220,
         display:'flex',
-        flexDirection:'row',
-        justifyContent:'space-around',
-        alignItems:'center'
-    },
+        flexDirection:'column',
+        alignItems:'center',
+        marginBottom:50
+        },
     iconCloseAbove:{
-        marginLeft:6
+        marginLeft:6,
+        display:'flex',
+        justifyContent:'flex-end'
+    },
+    btnContinue:{
+        width:120,
+        height:48,
+        backgroundColor:'rgb(0,230,64)',
+        borderRadius:20,
+        display:'flex',
+        justifyContent:'center',
+        alignItems:'center',
+        marginTop:30,
+        marginBottom:15,
+        shadowColor:'rgba(0,0,0,0.4)',
+        elevation:15,
+        shadowOffset:{width:5,height:5},
+        shadowOpacity:.5,
+        shadowRadius:14
     }
 })
 

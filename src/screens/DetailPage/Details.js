@@ -14,14 +14,14 @@ const Details = () => {
     const onShare = async () => {
         try {
           const result = await Share.share({
-            message:`
-            Property Type: ${objData.propertyType}
-            Name: ${objData.name}
-            Bed Room: ${objData.bedRoom}
-            Furniture Type: ${objData.furTypes}
-            Created At: ${objData.createdAt}
-            Price: ${'$'+objData.monthlyPrice}
-            `,
+            message:
+            "Property Type:"+ objData.propertyType
+            +"\nName:"+ objData.name
+            +"\nBed Room:" +objData.bedRoom
+            +"\nFurniture Type:"+ objData.furTypes
+            +"\nCreated At:" +objData.createdAt
+            +"\nPrice:" +objData.monthlyPrice
+            ,
             title:`The Post ${objData.id}`,
             url:objData.images,
           });

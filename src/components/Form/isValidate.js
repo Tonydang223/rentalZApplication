@@ -1,7 +1,6 @@
 import React from 'react'
 
-export const isValidate = (values,setError) => {
-    const regexLetter = /^[a-zA-Z\s]*$/
+export const isValidate = (values,setError,regexLetter,regexNumber) => {
     if(!values.property){
         setError((pre)=>{
             return {...pre,property:'This field must be required'}
@@ -34,7 +33,7 @@ export const isValidate = (values,setError) => {
         setError((pre)=>{
             return {...pre,price:'Price must be bigger than 0'}
         })
-    }else if(!values.price.match(/^-?[0-9][0-9,\.]+$/)){
+    }else if(!values.price.match(regexNumber)){
         setError((pre)=>{
             return {...pre,price:'You need enter right format'}
         })
@@ -43,9 +42,9 @@ export const isValidate = (values,setError) => {
         setError((pre)=>{
             return {...pre,name:'This field must be required'}
         })
-    }else if(values.name.length>20){
+    }else if(values.name.length>25){
         setError((pre)=>{
-            return {...pre,name:'The name is not too 20 characters'}
+            return {...pre,name:'The name is not too 25 characters'}
         })
     }else if(!values.name.match(regexLetter)){
         setError((pre)=>{

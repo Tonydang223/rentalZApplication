@@ -8,12 +8,12 @@ const ModalError = (props) => {
     const {contents,show,status,setShow,initialValues,values,InsertData,setStatus,setDateAdd,setValues} = props
 
     const onClick = ()=>{
-      setShow(false) 
+      setShow(false)
     }
     const {name,color,headingText,content} = contents
 
     return (
-        <Modal transparent visible={show}>
+        <Modal transparent visible={show} animationType="fade">
             <StatusBar
                 backgroundColor={status === 'loading'?null:'rgba(0,0,0,0.2)'}
                 barStyle={status === 'loading'?'dark-content':'light-content'}

@@ -10,22 +10,23 @@ import { pickerStyles, styles } from './styles';
 import { isValidate } from './isValidate';
 import dbSqlite, { db } from '../../../configs/dbOpen';
 
-const EditForm = ({dataObj,setEditVisible,setStatus}) => {
-    const {createdAt,price,updatedAt,monthlyPrice,propertyType,furTypes} = dataObj
+const EditForm = ({dataObj,setEditVisible,setStatusEdit}) => {
+    const {createdAt,updatedAt,monthlyPrice,propertyType,furTypes} = dataObj
     const dataObjNew = {...dataObj,dateTime:createdAt,price:monthlyPrice.toString(),property:propertyType,furType:furTypes}
-
+    
     const [values,setValues] = useState(dataObjNew)
     console.log(values)
     const [error,setError]  = useState({})
     const [dateEdit,setDateEdit] = useState(new Date(updatedAt))
-
+    const regexLetter = /^[a-zA-Z\s]*$/
+    const regexNumber = /^-?[0-9][0-9,\.]+$/
     const boderColorSelectbedRoom = error.bedRoom?'#CF000F':'#000000'
      // update Data
     const updateData = async(value)=>{
         const {property,bedRoom,dateTime,price,furType,note,name,updatedAt,id}=value
         const parsePrice = parseFloat(price)
        await db.transaction((tx)=>{
-            tx.executeSql(`UPDATE rentalDatabase SET 
+            tx.executeSql(`UPDATE rentalData SET 
             propertyType=?, 
             bedRoom=?,
             createdAt=?,
@@ -38,14 +39,14 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
             [property,bedRoom,dateTime,parsePrice,furType,note,name,updatedAt,id],
             (tx,result)=>{
              setTimeout(()=>{
-                 setStatus('success')
+                 setStatusEdit('success')
              },3000)
              console.log('update oke')
             },
             (error)=>{
                 console.log('loi update')
                 setTimeout(()=>{
-                    setStatus('errorUpdate')
+                    setStatusEdit('errorUpdate')
                 },3000)
             }
             )
@@ -66,28 +67,26 @@ const EditForm = ({dataObj,setEditVisible,setStatus}) => {
    
     const submit = (value)=>{
         const parsePrice = parseFloat(value.price)>0
-        if(isValidate(values,setError)){
-            console.log('have error')
-            setStatus('error')
+        if(isValidate(value,setError,regexLetter,regexNumber)){
+            setStatusEdit('error')
             setEditVisible(true)
         }
         
         if(value.name !== ''
-        && value.price!=='' 
+        &&value.price!=='' 
         &&value.bedRoom!==null
         &&value.property!==''
-        &&value.property.match(/^[a-zA-Z\s]*$/)
+        &&value.property.match(regexLetter)
         &&value.dateTime !== ''
         &&value.property.length<25
         &&value.name.length<20
-        &&value.name.match(/^[a-zA-Z\s]*$/)
-        &&value.price.match(/^-?[0-9][0-9,\.]+$/)
+        &&value.name.match(regexLetter)
+        &&value.price.match(regexNumber)
         &&parsePrice
         ){
             setEditVisible(true)
-            setStatus('loading')
+            setStatusEdit('loading')
             updateData(value)
-            console.log('no loi')
         }
     }
     const placeholder=(name)=> {
