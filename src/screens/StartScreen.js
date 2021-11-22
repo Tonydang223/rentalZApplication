@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, View,Text,Image, ImageBackground,TouchableOpacity } from 'react-native';
+import { StyleSheet, View,Text,Image, ImageBackground,TouchableOpacity,StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'
 import {useNavigation} from '@react-navigation/native'
 const GetStarted = (props) => {
@@ -15,8 +15,12 @@ const GetStarted = (props) => {
         style={[styles.wrapper,{width:width,height:height}]}
         >
         <View style={styles.wrapper}>
-
         </View>
+        <StatusBar
+        backgroundColor={"rgba(0,0,0,0)"}
+        barStyle="dark-content"
+        translucent
+        />
         <View style={[styles.content]}>
         <Text style={styles.heading}>Welcome,</Text>
         <Text style={styles.heading}>RentalZ</Text>

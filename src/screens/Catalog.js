@@ -25,7 +25,7 @@ const Catalog = () => {
  const [show,setShow] = useState(false)
  const [status,setStatus] = useState('')
  const isFocused = useIsFocused();
-console.log(rentalData)
+ console.log(rentalData)
    const fetchAllData = async ()=>{
        await db.transaction((tx)=>{
         tx.executeSql(
@@ -57,6 +57,53 @@ console.log(rentalData)
       }
     }
   }
+  const deletePicture = (id)=>{
+        db.transaction((tx)=>{
+          tx.executeSql("DELETE FROM rentalData  WHERE id=?",
+          [id],
+          (tx,result)=>{
+            // const arryF= rentalData.data.filter(item=>item.rental_id !== 2)
+            // setRentalData({...rentalData,data:arryF})
+            setStatus('pending')
+            setAction('delete')
+            console.log('OK')
+          },
+          (error)=>{
+            console.log('loi r')
+            showMessage({
+              message: "Error Delete",
+              description: "The post can't remove",
+              type: "error",
+            })
+          }
+          )
+      })
+    }
+
+    const uploadPicture = async(id)=>{
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing:true,
+      aspect:[4,3],
+      quality:1
+    })
+    console.log(result)
+    const img = !result.cancelled?result.uri:null
+    await db.transaction((tx)=>{
+      tx.executeSql("UPDATE rentalData  SET images=? WHERE id=?",
+      [img,id],
+      (tx,result)=>{
+        console.log('ok do')
+        setStatus('pending')
+        setAction('upload')
+        setShow(true)
+      },
+      (error)=>{
+        console.log("don't upload any image ")
+      }
+      )
+    })
+    }
   useEffect(()=>{
     fetchAllData()
     if(status === 'pending'){
@@ -70,53 +117,7 @@ console.log(rentalData)
       requestLibrary();
     }
   },[isFocused,status])
-    const deletePicture = (id)=>{
-          db.transaction((tx)=>{
-            tx.executeSql("DELETE FROM rentalData  WHERE id=?",
-            [id],
-            (tx,result)=>{
-              // const arryF= rentalData.data.filter(item=>item.rental_id !== 2)
-              // setRentalData({...rentalData,data:arryF})
-              setStatus('pending')
-              setAction('delete')
-              console.log('OK')
-            },
-            (error)=>{
-              console.log('loi r')
-              showMessage({
-                message: "Error Delete",
-                description: "The post can't remove",
-                type: "error",
-              })
-            }
-            )
-        })
-     }
-
-   const uploadPicture = async(id)=>{
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing:true,
-        aspect:[4,3],
-        quality:1
-    })
-    console.log(result)
-    const img = !result.cancelled?result.uri:null
-    await db.transaction((tx)=>{
-        tx.executeSql("UPDATE rentalData  SET images=? WHERE id=?",
-        [img,id],
-        (tx,result)=>{
-          console.log('ok do')
-          setStatus('pending')
-          setAction('upload')
-          setShow(true)
-        },
-        (error)=>{
-          console.log("don't upload any image ")
-        }
-        )
-      })
-  }
+   
     return (
         <View style={styles.wrapper}>
            <View style={styles.header}>

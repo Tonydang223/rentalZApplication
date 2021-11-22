@@ -79,9 +79,9 @@ const SearchPage = () => {
 
     // back mainSearchPage from detail Screen
     const onClick = ()=>{
-        Keyboard.dismiss()
         setTimeout(()=>{
             navigation.goBack()
+            refFocus.current.blur()
         },100)
     }
     
@@ -92,14 +92,12 @@ const SearchPage = () => {
         setDataSearch({...dataSearch,data:data})
     }
     useEffect(()=>{
-          getData()
           if(isFocused){
             setTimeout(()=>{
                 refFocus.current.focus()
             },100)
-            
+            getData()
           }
-          return()=>!isFocused
     },[isFocused])
 
     return (
